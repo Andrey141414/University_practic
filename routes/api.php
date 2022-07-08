@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AddressController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,4 +16,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
+
+
+
+
+
+
+
+Route::get('/1', function () {
+    return 'Hi';
 });
