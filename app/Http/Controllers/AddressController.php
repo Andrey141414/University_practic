@@ -13,10 +13,12 @@ class AddressController extends Controller
     {
         $model = new AddressModel();
         //Storage::disk('public')->put('movies.json', response()->json($request->input("address")));
-        $model->title = $request->input('title');
-        $model->titlestr = $request->input('title');
-        $model->id_user = 1;
+        //$model->id_user = 1;
+
+        $model->title = json_encode( $request->input());
+        $model->titleStr = $request->input('title');
         $model->save();
         return response()->json($model::all(),200);
+   // return $request->input();
     }
 }
