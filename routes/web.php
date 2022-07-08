@@ -19,5 +19,5 @@ Route::get('/', function () {
 
 
 Route::get('/test', function () {
-    return response()->json(['string' => 'Все хорошо'],200);
+    return response()->json(['string' => 'All right'],200);
 });
