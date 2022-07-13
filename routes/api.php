@@ -30,7 +30,7 @@ Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 Route::post('/testing', [App\Http\Controllers\Auth\LoginController::class,'token']);
 
 
-Route::get('city/allCites', [App\Http\Controllers\CityController::class,'setAllCitys']);
+Route::get('city/all_cities', [App\Http\Controllers\CityController::class,'setAllCitys']);
 // Route::group(['prefix' => 'oauth'
 //     ], function () {
 //         Route::post('/login', ['App\Http\Controllers\Auth\AuthController','login']);
