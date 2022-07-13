@@ -27,7 +27,11 @@ Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 
 
-Route::post('/testing', [App\Http\Controllers\Auth\LoginController::class,'token']);
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class,'login']);
+Route::post('/refresh', [App\Http\Controllers\Auth\LoginController::class,'refresh']);
+Route::post('/register', [App\Http\Controllers\Auth\LoginController::class,'register']);
+
+Route::get('/user-profile', [App\Http\Controllers\Auth\LoginController::class,'profile']);
 
 
 Route::get('city/all_cities', [App\Http\Controllers\CityController::class,'setAllCitys']);
