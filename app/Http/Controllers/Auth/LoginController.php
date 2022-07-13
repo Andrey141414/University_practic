@@ -16,20 +16,21 @@ class LoginController extends Controller
 
     public function token(Request $request)
     {
-        //$response = Http::asForm()->get('http://127.0.0.1:8000/ping') ;
-        $client = new Client();
-        $res = $client->request('POST', 'http://127.0.0.1:8000/oauth/token',[
-            'form_params' => [
+        //$client = new Client();
+        //Http::get('http://127.0.0.1:8000/ping');
+
+        $response = Http::asForm()->post((config('app.url').'/oauth/token'),[
                 'grant_type' => 'password',
-                'client_id' => 2,
+                'client_id' => '2',
                 'client_secret' => 'fgRE04VilkM77asl4298NO9mFusbbWHyCAHi0kBb',
                 'username' => $request->get('email'),
                 'password' => $request->get('password'),
                 'scope' => '',
-            ]
         ]);
-        return 200;
-        //return $response->json();
+        //dd(config('passport.password_grant_client.id'));
+        //return env('PASSWORD_CLIENT_ID');
+        
+        return [response()->json($response->json()), (config('app.url').'/oauth/token')];
     }
 
     public function refresh(Request $request)
