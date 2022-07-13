@@ -3,7 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AddressController;
-
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\LoginController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,10 +24,24 @@ Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 
 
+Route::post('/oauth/token', [LoginController::class, 'token'])->name('token');
+       
+// Route::group(['prefix' => 'oauth'
+//     ], function () {
+//         Route::post('/login', ['App\Http\Controllers\Auth\AuthController','login']);
+//         Route::post('/register', ['App\Http\Controllers\Auth\AuthController','register']);
+ 
+//  Route::post('/refresh', [LoginController::class, 'refresh'])->name('refresh');
+
+ 
+//     Route::group(['middleware' => 'auth:api'], function() {
+//  Route::get('logout', 'Auth\AuthController@logout');
+//  Route::get('user', 'Auth\AuthController@user');
+//  });
+//});
 
 
-
-
-Route::get('/1', function () {
+Route::get('/ping', function () {
     return 'Hi';
 });
+
