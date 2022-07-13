@@ -19,7 +19,7 @@ class LoginController extends Controller
         //$client = new Client();
         //Http::get('http://127.0.0.1:8000/ping');
 
-        $response = Http::asForm()->post((config('app.url').'/oauth/token'),[
+        $response = Http::asForm()->post(('https://polar-eyrie-91847.herokuapp.com/oauth/token'),[
                 'grant_type' => 'password',
                 'client_id' => '2',
                 'client_secret' => 'fgRE04VilkM77asl4298NO9mFusbbWHyCAHi0kBb',
