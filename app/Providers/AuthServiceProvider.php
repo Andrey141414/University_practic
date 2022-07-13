@@ -32,9 +32,9 @@ class AuthServiceProvider extends ServiceProvider
         //     $router->forTransientTokens();
         // });
         
-        //if (! $this->app->routesAreCached()) {
+        if (! $this->app->routesAreCached()) {
             Passport::routes();
-        //}
+        }
 
         //Passport::tokensExpireIn(Carbon::now()->addMinutes(10));
         

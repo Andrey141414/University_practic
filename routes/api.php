@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CityController;
+use App\Models\CityModel;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,8 +27,10 @@ Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 
 
-Route::post('/oauth/token', [LoginController::class, 'token'])->name('token');
-       
+Route::post('/testing', [App\Http\Controllers\Auth\LoginController::class,'token']);
+
+
+Route::get('city/allCites', [App\Http\Controllers\CityController::class,'setAllCitys']);
 // Route::group(['prefix' => 'oauth'
 //     ], function () {
 //         Route::post('/login', ['App\Http\Controllers\Auth\AuthController','login']);

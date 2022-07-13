@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\LoginProxy;
 use Illuminate\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
+use App\Models\CityModel;
 
 class LoginController extends Controller
 {
@@ -14,16 +16,20 @@ class LoginController extends Controller
 
     public function token(Request $request)
     {
-        $response = Http::asForm()->post('http://127.0.0.1:8000/oauth/token' , [
-            'grant_type' => 'password',
-            'client_id' => 2,
-            'client_secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),//'fgRE04VilkM77asl4298NO9mFusbbWHyCAHi0kBb',
-            'username' => $request->get('email'),
-            'password' => $request->get('password'),
-            'scope' => '',
+        //$response = Http::asForm()->get('http://127.0.0.1:8000/ping') ;
+        $client = new Client();
+        $res = $client->request('POST', 'http://127.0.0.1:8000/oauth/token',[
+            'form_params' => [
+                'grant_type' => 'password',
+                'client_id' => 2,
+                'client_secret' => 'fgRE04VilkM77asl4298NO9mFusbbWHyCAHi0kBb',
+                'username' => $request->get('email'),
+                'password' => $request->get('password'),
+                'scope' => '',
+            ]
         ]);
-
-        return $response->json();
+        return 200;
+        //return $response->json();
     }
 
     public function refresh(Request $request)
