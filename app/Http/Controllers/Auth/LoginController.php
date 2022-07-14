@@ -22,10 +22,16 @@ class LoginController extends Controller
     {
     
         $validator = Validator::make($request->all(), [
-                    'name' => 'required|between:2,100',
-                    'email' => 'required|email|unique:users|max:50',
-                    'password' => 'required|string|min:6',
-                ]);
+            'name' => 'required|between:2,100',
+            'email' => 'required|email|unique:users|max:50',
+            'password' => 'required|string|min:6',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error'
+            ], 422);
+        }
         
     $user = User::create(array_merge(
                 $validator->validated(),
