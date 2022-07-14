@@ -61,7 +61,7 @@ class LoginController extends Controller
                 'scope' => '',
         ]); 
         return response()->json($response->json());
-    }
+        }
     
     
     public function profile()
