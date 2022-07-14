@@ -34,7 +34,7 @@ Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 Route::post('/auth/login', [App\Http\Controllers\Auth\LoginController::class,'login']);
 Route::post('/auth/refresh', [App\Http\Controllers\Auth\LoginController::class,'refresh']);
-Route::post('/auth/register', [App\Http\Controllers\Auth\LoginController::class,'register']);
+Route::post('/auth/registr', [App\Http\Controllers\Auth\LoginController::class,'registr']);
 
 Route::get('/auth/user-profile', [App\Http\Controllers\Auth\LoginController::class,'profile']);
 

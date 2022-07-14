@@ -21,6 +21,10 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('phone_number');
+            $table->boolval('blocked_admin');
+            $table->integer('num_login_attempts');
+            $table->boolval('is_admin');
         });
     }
 
