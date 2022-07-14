@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CityController;
 use App\Models\CityModel;
 
+use App\Http\Controllers\ImageController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -40,6 +41,9 @@ Route::get('/auth/user-profile', [App\Http\Controllers\Auth\LoginController::cla
 
 
 Route::get('city/all_cities', [App\Http\Controllers\CityController::class,'setAllCitys']);
+
+Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_image']);
+
 // Route::group(['prefix' => 'oauth'
 //     ], function () {
 //         Route::post('/login', ['App\Http\Controllers\Auth\AuthController','login']);
