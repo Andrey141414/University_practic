@@ -19,6 +19,11 @@ use App\Models\CityModel;
 |
 */
 
+// header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS");
+// header("Access-Control-Allow-Headers: *");
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -27,11 +32,11 @@ Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 
 
-Route::post('/login', [App\Http\Controllers\Auth\LoginController::class,'login']);
-Route::post('/refresh', [App\Http\Controllers\Auth\LoginController::class,'refresh']);
-Route::post('/register', [App\Http\Controllers\Auth\LoginController::class,'register']);
+Route::post('auth/login', [App\Http\Controllers\Auth\LoginController::class,'login']);
+Route::post('auth/refresh', [App\Http\Controllers\Auth\LoginController::class,'refresh']);
+Route::post('auth/register', [App\Http\Controllers\Auth\LoginController::class,'register']);
 
-Route::get('/user-profile', [App\Http\Controllers\Auth\LoginController::class,'profile']);
+Route::get('auth/user-profile', [App\Http\Controllers\Auth\LoginController::class,'profile']);
 
 
 Route::get('city/all_cities', [App\Http\Controllers\CityController::class,'setAllCitys']);

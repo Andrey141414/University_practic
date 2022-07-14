@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
+use DateInterval;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -36,8 +37,13 @@ class AuthServiceProvider extends ServiceProvider
             Passport::routes();
         //}
 
-        //Passport::tokensExpireIn(Carbon::now()->addMinutes(10));
+        // Passport::tokensExpireIn(Carbon::now()->addDays(10));
+        // Passport::personalAccessTokensExpireIn( Carbon::now()->addDays(10));
+        // Passport::refreshTokensExpireIn(now()->addMinutes(2));
+        //Passport::tokensExpireIn(new DateInterval('P1D'));
+        //Passport::refreshTokensExpireIn('P1D');
+        $personalAccessTokensExpireIn = new DateInterval('P1D');
         
-        //Passport::refreshTokensExpireIn(Carbon::now()->addDays(10));
+        //Passport::refreshTokensExpireIn(now()->addMinute(2));
     }
 }

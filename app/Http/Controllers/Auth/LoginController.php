@@ -4,9 +4,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Providers\AuthServiceProvider;
+use Laravel\Passport\Passport;
+use Carbon\Carbon;
+use DateInterval;
+
 
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Passport\Bridge\AccessToken;
 
 class LoginController extends Controller
 {
@@ -60,8 +66,9 @@ class LoginController extends Controller
                 'password' => $request->get('password'),
                 'scope' => '',
         ]); 
-        return response()->json($response->json());
-        }
+        
+        return [response()->json($response->json())];
+    }
     
     
     public function profile()
