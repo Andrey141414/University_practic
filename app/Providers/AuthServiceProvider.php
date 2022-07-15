@@ -27,23 +27,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Passport::routes(function ($router) {
-        //     $router->forAccessTokens();
-        //     $router->forPersonalAccessTokens();
-        //     $router->forTransientTokens();
-        // });
         
-        //if (! $this->app->routesAreCached()) {
-            Passport::routes();
-        //}
+        
+        Passport::routes();
 
-        // Passport::tokensExpireIn(Carbon::now()->addDays(10));
-        // Passport::personalAccessTokensExpireIn( Carbon::now()->addDays(10));
-        // Passport::refreshTokensExpireIn(now()->addMinutes(2));
-        //Passport::tokensExpireIn(new DateInterval('P1D'));
-        //Passport::refreshTokensExpireIn('P1D');
+        Passport::tokensExpireIn(now()->addSecond(60*60*24*30));
+        Passport::refreshTokensExpireIn(now()->addSecond(60*60));
         $personalAccessTokensExpireIn = new DateInterval('P1D');
         
-        //Passport::refreshTokensExpireIn(now()->addMinute(2));
     }
 }

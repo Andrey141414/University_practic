@@ -42,7 +42,7 @@ class LoginController extends Controller
     return response()->json([
         'message' => 'Successfully registered',
         'user' => $user
-    ], 201);
+    ], 200);
     }
 
 
@@ -56,13 +56,13 @@ class LoginController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation error'
-            ], 422);
+            ], 400);
         }
 
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json([
                 'message' => 'Unauthorized'
-            ], 404);
+            ], 401);
         }
         
         $response = Http::asForm()->post(('https://polar-eyrie-91847.herokuapp.com/oauth/token'),[
@@ -74,7 +74,7 @@ class LoginController extends Controller
                 'scope' => '',
         ]); 
         
-        return [response()->json($response->json())];
+        return response()->json($response->json());
     }
     
     
@@ -87,7 +87,7 @@ class LoginController extends Controller
         {
             return response()->json([
                 'message' => 'Unauthorized'
-            ], 404);
+            ], 401);
         }
     }
 
