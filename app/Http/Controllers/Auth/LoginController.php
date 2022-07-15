@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Providers\AuthServiceProvider;
-use Laravel\Passport\Passport;
-use Carbon\Carbon;
-use DateInterval;
+use App\Models\CityModel;
 
 
 use App\Models\User;
@@ -38,6 +35,9 @@ class LoginController extends Controller
                 $validator->validated(),
                 ['password' => bcrypt($request->password)],
     ));
+    
+    $user->id_city = $request->input('id_city');
+    $user->save();
 
     return response()->json([
         'message' => 'Successfully registered',

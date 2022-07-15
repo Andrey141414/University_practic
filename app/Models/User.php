@@ -25,6 +25,7 @@ class User extends Authenticatable
         'blocked_admin',
         'num_login_attempts',
         'is_admin',
+        'id_city',
         
 
     ];
