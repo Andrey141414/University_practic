@@ -19,12 +19,14 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();>= now() - interval 2 hour
         $schedule->call(function () {
+            accessTokens::whereRaw('expires_at < now()')->delete();
+        })->everyMinute();
+
+        $schedule->call(function () {
             refreshTokens::whereRaw('expires_at < now()')->delete();
         })->daily();
 
-        $schedule->call(function () {
-            accessTokens::whereRaw('expires_at < now()')->delete();
-        })->everyMinute();
+       
 
     }
 
