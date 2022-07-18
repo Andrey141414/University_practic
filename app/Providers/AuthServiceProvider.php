@@ -31,9 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         
         Passport::routes();
 
-        Passport::tokensExpireIn(now()->addSecond(60*60));
+        Passport::tokensExpireIn(now()->addSecond(60));
         Passport::refreshTokensExpireIn(now()->addSecond(60*60*24*30));
-        $personalAccessTokensExpireIn = new DateInterval('P1D');
-        
     }
 }
