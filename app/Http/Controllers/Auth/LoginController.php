@@ -8,6 +8,7 @@ use App\Models\CityModel;
 
 
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Bridge\AccessToken;
 
@@ -37,13 +38,18 @@ class LoginController extends Controller
     ));
     
     $user->id_city = $request->input('id_city');
-    $user->save();
+    //$user->save();
+if($user)
+{
+    event(new Registered($user));
+    return redirect()->route('verification.notice');
+  }
+    // return response()->json([
+    //     'message' => 'Successfully registered',
+    //     'user' => $user
+    // ], 200);
 
-    return response()->json([
-        'message' => 'Successfully registered',
-        'user' => $user
-    ], 200);
-    }
+}
 
 
     public function login(Request $request)

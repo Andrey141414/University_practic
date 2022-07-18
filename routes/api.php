@@ -6,6 +6,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\mailController;
 use App\Models\CityModel;
 
 use App\Http\Controllers\ImageController;
@@ -42,7 +43,7 @@ Route::post('/auth/registr', [App\Http\Controllers\Auth\LoginController::class,'
 Route::get('/auth/user-profile', [App\Http\Controllers\Auth\LoginController::class,'profile']);
 
 
-Route::get('city/all_cities', [App\Http\Controllers\CityController::class,'setAllCitys']);
+Route::get('/city/all_cities', [App\Http\Controllers\CityController::class,'setAllCitys']);
 
 Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_image']);
 
@@ -61,7 +62,15 @@ Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_im
 //});
 
 
+Route::get('/test_mail', [App\Http\Controllers\mailController::class,'sentMail']);
+
+
 Route::get('/ping', function () {
     return 'Hi';
-});
+})->name('ping');
 
+
+Route::post('/callback', function(Request $request){
+    //$input = $request::all();
+    return response()->json($request);
+});

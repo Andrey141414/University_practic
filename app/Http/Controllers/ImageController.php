@@ -13,6 +13,6 @@ class ImageController extends Controller
         $data = base64_decode($data);
         file_put_contents("picture.jpeg",$data);
 
-        
+
     }
 }
