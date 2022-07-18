@@ -16,9 +16,11 @@ class testMailClass extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public int $code;
+    public function __construct(int $code)
     {
         //
+        $this->code = $code;
     }
 
     /**
@@ -28,6 +30,6 @@ class testMailClass extends Mailable
      */
     public function build()
     {
-        return $this->view('\auth\verify-email');
+        return $this->view('blog',[ "code" => $this -> code]);
     }
 }

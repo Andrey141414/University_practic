@@ -5,12 +5,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\CityModel;
-
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\testMailClass;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Bridge\AccessToken;
+use App\Http\Controllers\mailController;
 
 class LoginController extends Controller
 {
@@ -31,23 +32,26 @@ class LoginController extends Controller
                 'message' => 'Validation error'
             ], 422);
         }
-        
-    $user = User::create(array_merge(
+
+
+
+/////////////////////////////////////////////////////////////
+         
+        $id_city = $request->input('id_city');
+        $user = User::create(array_merge(
                 $validator->validated(),
-                ['password' => bcrypt($request->password)],
+                ['password' => bcrypt($request->password),
+                 'id_city'=>$id_city,],
+
     ));
-    
-    $user->id_city = $request->input('id_city');
-    //$user->save();
-if($user)
-{
-    event(new Registered($user));
-    return redirect()->route('verification.notice');
-  }
-    // return response()->json([
-    //     'message' => 'Successfully registered',
-    //     'user' => $user
-    // ], 200);
+    //$user ->email_verified_at =  now();
+    $user->save();
+
+
+    return response()->json([
+        'message' => 'Successfully registered',
+        'user' => $user
+    ], 200);
 
 }
 

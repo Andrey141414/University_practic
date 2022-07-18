@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 // use Laravel\Sanctum\HasApiTokens;
 use Laravel\Passport\HasApiTokens;
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable 
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -26,7 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'num_login_attempts',
         'is_admin',
         'id_city',
-        
+        'email_code'
 
     ];
 

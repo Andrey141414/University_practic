@@ -9,6 +9,9 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\mailController;
 use App\Models\CityModel;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\testMailClass;
+
 use App\Http\Controllers\ImageController;
 /*
 |--------------------------------------------------------------------------
@@ -66,7 +69,9 @@ Route::get('/test_mail', [App\Http\Controllers\mailController::class,'sentMail']
 
 
 Route::get('/ping', function () {
-    return 'Hi';
+    $code = rand(1000, 9999);
+        Mail::to('andrusha.vinokurov@gmail.com')->send(new testMailClass($code));
+        //return view('blog', ['code' => $code]);
 })->name('ping');
 
 
