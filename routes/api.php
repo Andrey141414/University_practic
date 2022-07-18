@@ -2,13 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
+
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\mailController;
 use App\Models\CityModel;
-
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\testMailClass;
 
@@ -50,28 +52,13 @@ Route::get('/city/all_cities', [App\Http\Controllers\CityController::class,'setA
 
 Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_image']);
 
-// Route::group(['prefix' => 'oauth'
-//     ], function () {
-//         Route::post('/login', ['App\Http\Controllers\Auth\AuthController','login']);
-//         Route::post('/register', ['App\Http\Controllers\Auth\AuthController','register']);
- 
-//  Route::post('/refresh', [LoginController::class, 'refresh'])->name('refresh');
-
- 
-//     Route::group(['middleware' => 'auth:api'], function() {
-//  Route::get('logout', 'Auth\AuthController@logout');
-//  Route::get('user', 'Auth\AuthController@user');
-//  });
-//});
 
 
-Route::get('/test_mail', [App\Http\Controllers\mailController::class,'sentMail']);
+Route::post('/test_mail', [App\Http\Controllers\mailController::class,'sentMail']);
 
+Route::post('/check_mail', [App\Http\Controllers\mailController::class,'checkMail']);
 
 Route::get('/ping', function () {
-    $code = rand(1000, 9999);
-        Mail::to('andrusha.vinokurov@gmail.com')->send(new testMailClass($code));
-        //return view('blog', ['code' => $code]);
 })->name('ping');
 
 
