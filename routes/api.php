@@ -53,14 +53,17 @@ Route::get('/city/all_cities', [App\Http\Controllers\CityController::class,'setA
 Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_image']);
 
 
+//почта
+Route::get('/sent_code', [App\Http\Controllers\mailController::class,'sentMail']);
+Route::post('/check_code', [App\Http\Controllers\mailController::class,'checkMail']);
+//
 
-Route::post('/test_mail', [App\Http\Controllers\mailController::class,'sentMail']);
-
-Route::post('/check_mail', [App\Http\Controllers\mailController::class,'checkMail']);
 
 Route::get('/ping', function () {
+    return auth('api')->user()->id;
 })->name('ping');
 
+//Route::get('/profile',[App\Http\Controllers\Auth\AuthController::class,'getIdByAccessToken']);
 
 Route::post('/callback', function(Request $request){
     //$input = $request::all();
