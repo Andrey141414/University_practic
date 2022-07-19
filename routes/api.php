@@ -43,9 +43,12 @@ Route::controller(App\Http\Controllers\mailController::class)->group(function ()
 });
 
 //Лента
+Route::controller(App\Http\Controllers\tapeController::class)->group(function () {
     Route::get('category/get_category', 'getCategory')->middleware('onlyAuthorized');
-    Route::get('city/all_cities', [App\Http\Controllers\tapeController::class,'setAllCitys']);
-//
+    Route::get('city/all_cities', 'setAllCitys');
+
+    //
+});
 
 //
 
