@@ -91,15 +91,15 @@ class LoginController extends Controller
     
     public function profile()
     {
-        if(auth('api')->user() != null){    
+        //if(auth('api')->user() != null){    
         return (new userController())->userInfo(auth('api')->user());
-        }
-        else
-        {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
-        }
+        //}
+        // else
+        // {
+        //     return response()->json([
+        //         'message' => 'Unauthorized'
+        //     ], 401);
+        // }
     }
 
     

@@ -17,12 +17,7 @@ class mailController extends Controller
     public function sentMail()
     {
 
-        if(auth('api')->user() == null)
-        {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
-        }
+
         $this->id = auth('api')->user()->id;
         $this -> user = User::find($this->id);
     
@@ -40,12 +35,7 @@ class mailController extends Controller
 
     public function checkMail(Request $request)
     {
-        if(auth('api')->user() == null)
-        {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 401);
-        }
+
         $this->id = auth('api')->user()->id;
         $this -> user = User::find($this->id);
         if($this->user->email_code == $request->input('email_code'))
