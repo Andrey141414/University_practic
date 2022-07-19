@@ -44,7 +44,7 @@ class mailController extends Controller
                 'message' => 'Unauthorized'
             ], 401);
         }
-        $this->id = auth('api')->user();
+        $this->id = auth('api')->user()->id;
         $this -> user = User::find($this->id);
         if($this->user->email_code == $request->input('email_code'))
         {

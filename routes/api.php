@@ -60,7 +60,10 @@ Route::post('/check_code', [App\Http\Controllers\mailController::class,'checkMai
 
 
 Route::get('/ping', function () {
-    return auth('api')->user()->id;
+    //return [(auth('api')->user())->id,
+    $user = auth('api')->user();
+    return CityModel::find($user->id_city)->name;
+    //return CityModel::all();
 })->name('ping');
 
 //Route::get('/profile',[App\Http\Controllers\Auth\AuthController::class,'getIdByAccessToken']);
