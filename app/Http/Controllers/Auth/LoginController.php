@@ -12,6 +12,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Bridge\AccessToken;
 use App\Http\Controllers\mailController;
+use App\Http\Controllers\userController;
 
 class LoginController extends Controller
 {
@@ -91,20 +92,7 @@ class LoginController extends Controller
     public function profile()
     {
         if(auth('api')->user() != null){    
-            
-            return response()->json([
-        'id'=> auth('api')->user()->id,
-        'email'=> auth('api')->user()->email ,
-        'name' => auth('api')->user()->name,
-        'email_verified_at'=> auth('api')->user()->email_verified_at,
-        'phone_number'=> auth('api')->user()->phone_number,
-        'blocked_admin'=> auth('api')->user()->blocked_admin,
-        'num_login_attempts'=> auth('api')->user()->num_login_attempts,
-        'is_admin'=> auth('api')->user()->is_admin,
-        'city'=> CityModel::find(auth('api')->user()->id_city)->name,
-        ]);
-
-
+        return (new userController())->userInfo(auth('api')->user());
         }
         else
         {
