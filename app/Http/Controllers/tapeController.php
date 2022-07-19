@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CityModel;
 use App\Models\CategoryModel;
+use Illuminate\Support\Facades\Validator;
 
 class tapeController extends Controller
 {
@@ -20,6 +21,18 @@ class tapeController extends Controller
     
     public function addCategoryToDb(Request $request)
     {
+
+        $validator = Validator::make($request->all(), [
+            'icon' => 'required',
+            'category_name' => 'required|unique:category|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error'
+            ], 400);
+        }
+
         $icon = $request->input('icon');
         $db = new CategoryModel();
         $db->icon = $request->input('icon');

@@ -44,8 +44,8 @@ Route::controller(App\Http\Controllers\mailController::class)->group(function ()
 
 //Лента
 Route::controller(App\Http\Controllers\tapeController::class)->group(function () {
-    Route::get('category/get_category', 'getCategory')->middleware('onlyAuthorized');
-    Route::get('city/all_cities', 'setAllCitys')->middleware('onlyAuthorized');
+    Route::get('category/get_category', 'getCategory');
+    Route::get('city/all_cities', 'setAllCitys');
     Route::post('add_category_to_db', 'addCategoryToDb')->middleware('onlyAuthorized');
     //
 });
