@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\testMailClass;
 use App\Models\User;
+use App\Models\CityModel;
+use App\Http\Controllers\Auth\LoginController;
 
 class mailController extends Controller
 {
@@ -50,8 +52,17 @@ class mailController extends Controller
         {
             $this -> user -> email_verified_at = now();
             $this -> user->save();
-            return response()->json($this->user);
 
+                return response()->json([
+        'email'=> auth('api')->user()->email ,
+        'name' => auth('api')->user()->name,
+        'email_verified_at'=> auth('api')->user()->email_verified_at,
+        'phone_number'=> auth('api')->user()->phone_number,
+        'blocked_admin'=> auth('api')->user()->blocked_admin,
+        'num_login_attempts'=> auth('api')->user()->num_login_attempts,
+        'is_admin'=> auth('api')->user()->is_admin,
+        'city'=> CityModel::find(auth('api')->user()->id_city)->name,
+        ]);
         }
         else
         {
