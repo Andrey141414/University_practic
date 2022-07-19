@@ -46,7 +46,7 @@ Route::controller(App\Http\Controllers\mailController::class)->group(function ()
 Route::controller(App\Http\Controllers\tapeController::class)->group(function () {
     Route::get('category/get_category', 'getCategory')->middleware('onlyAuthorized');
     Route::get('city/all_cities', 'setAllCitys')->middleware('onlyAuthorized');
-    Route::post('add_icon_to_db', 'addIconToDb')->middleware('onlyAuthorized');
+    Route::post('add_category_to_db', 'addCategoryToDb')->middleware('onlyAuthorized');
     //
 });
 

@@ -18,15 +18,19 @@ class tapeController extends Controller
         return response()->json(CategoryModel::all(),200);
     }
     
-    public function addIconToDb(Request $request)
+    public function addCategoryToDb(Request $request)
     {
         $icon = $request->input('icon');
         $db = new CategoryModel();
-        $db->icon = $icon;
+        $db->icon = $request->input('icon');
+        $db->category_name = $request->input('category_name');
+        $db->is_active = true;
+        $db->sorting = 0;
+        
         $db->save();
 
-
-        return response()->json(CategoryModel::whereRaw('icon = null')->first());
+        return $this->getCategory();
+        //return response()->json(CategoryModel::whereRaw('icon = null')->first());
          
     }
 
