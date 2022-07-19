@@ -54,6 +54,7 @@ class mailController extends Controller
             $this -> user->save();
 
                 return response()->json([
+        'id'=> auth('api')->user()->id,
         'email'=> auth('api')->user()->email ,
         'name' => auth('api')->user()->name,
         'email_verified_at'=> auth('api')->user()->email_verified_at,

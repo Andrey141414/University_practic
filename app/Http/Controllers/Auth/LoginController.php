@@ -93,6 +93,7 @@ class LoginController extends Controller
         if(auth('api')->user() != null){    
             
             return response()->json([
+        'id'=> auth('api')->user()->id,
         'email'=> auth('api')->user()->email ,
         'name' => auth('api')->user()->name,
         'email_verified_at'=> auth('api')->user()->email_verified_at,
@@ -103,7 +104,7 @@ class LoginController extends Controller
         'city'=> CityModel::find(auth('api')->user()->id_city)->name,
         ]);
 
-        
+
         }
         else
         {
