@@ -49,7 +49,7 @@ class mailController extends Controller
         {
             return response()->json([
                 'message' => 'Incorrect code'
-            ], 401);
+            ], 402);
         }
     }
 }
