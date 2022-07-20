@@ -79,7 +79,7 @@ Route::post('/callback', function(Request $request){
 
 Route::controller(App\Http\Controllers\passwordController::class)->group(function () {
     Route::post('/send_password_reset_token', 'sendPasswordResetToken');
-    Route::get('/password_reset', 'isshowPasswordResetForm')->name('showPasswordResetForm');
+    Route::post('/is_valid_token', 'isshowPasswordResetForm')->name('showPasswordResetForm');
     Route::post('/password_reset', 'resetPassword');
 });
 
