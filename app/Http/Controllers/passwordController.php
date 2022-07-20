@@ -69,8 +69,8 @@ class passwordController extends Controller
  public function resetPassword(Request $request)
  {
      //some validation
-     $password = $request->password;
-     $tokenData = $request->token;
+     $password = $request->input('password');
+     $tokenData = $request->input('token');
     //  $tokenData = DB::table('password_resets')
     //  ->where('token', $token)->first();
 
