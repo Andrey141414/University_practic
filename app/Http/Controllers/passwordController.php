@@ -69,7 +69,7 @@ class passwordController extends Controller
  {
      //some validation
      $password = $request->input('password');
-     
+
      $tokenData = DB::table('password_resets')
      ->where('token', $request->input('token'))->first();
 
@@ -86,7 +86,8 @@ class passwordController extends Controller
 
     // If the user shouldn't reuse the token later, delete the token 
     DB::table('password_resets')->where('email', $user->email)->delete();
-
+    
+    return response()->json('password changed');
     //redirect where we want according to whether they are logged in or not.
  }
 
