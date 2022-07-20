@@ -50,9 +50,8 @@ class passwordController extends Controller
  * You check if the user and the token exist and display a page
  */
 
- public function showPasswordResetForm(Request $request)
+ public function isshowPasswordResetForm(Request $request)
  {
-    return 1234;
      $token = $request->get('token');
      $tokenData = DB::table('password_resets')
      ->where('token', $token)->first();
@@ -70,12 +69,14 @@ class passwordController extends Controller
  {
      //some validation
      $password = $request->input('password');
-     $tokenData = $request->input('token');
-    //  $tokenData = DB::table('password_resets')
-    //  ->where('token', $token)->first();
+     
+     $tokenData = DB::table('password_resets')
+     ->where('token', $request->input('token'))->first();
 
      $user = User::where('email', $tokenData->email)->first();
-     //if ( !$user ) return redirect()->to('home'); //or wherever you want
+     if ( !$user )  return response()->json([
+        'message' => 'User Error'
+    ], 400); //or wherever you want
 
      $user->password = bcrypt($password);
      $user->update(); //or $user->save();
