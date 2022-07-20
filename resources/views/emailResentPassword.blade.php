@@ -8,7 +8,7 @@
 </head>
 <body>
     <p>To recover your password follow the link</p>
-<a href="<?php echo route('showPasswordResetForm')?>"><?php echo 'password-reset?token='. $token ?></a>
+<a href="<?php echo ('http://46.50.152.115:3000/reset-password')?>"><?php echo 'password-reset?token='. $token ?></a>
 
 </body>
 </html>
