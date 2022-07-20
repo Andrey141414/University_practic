@@ -58,7 +58,7 @@ class passwordController extends Controller
 
      if ( !$tokenData )return response()->json(['isValid'=>false],400); //redirect them anywhere you want if the token does not exist.
      
-     return response()->json([$tokenData,'isValid'=>true],200);
+     return response()->json(['isValid'=>true],200);
  }
 
 
