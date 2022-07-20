@@ -80,7 +80,7 @@ Route::post('/callback', function(Request $request){
 Route::controller(App\Http\Controllers\passwordController::class)->group(function () {
     Route::post('/send_password_reset_token', 'sendPasswordResetToken');
     Route::get('/password_reset', 'showPasswordResetForm')->name('showPasswordResetForm');
-    Route::post('/password_reset', 'showPasswordResetForm');
+    Route::post('/password_reset', 'resetPassword');
 });
 
 // Route::get('password-reset', 'PasswordController@showForm'); //I did not create this controller. it simply displays a view with a form to take the email
