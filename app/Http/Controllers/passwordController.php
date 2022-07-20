@@ -56,9 +56,9 @@ class passwordController extends Controller
      $tokenData = DB::table('password_resets')
      ->where('token', $token)->first();
 
-     if ( $tokenData == null )response()->json(['isValid'=>false],200); //redirect them anywhere you want if the token does not exist.
+     if ( !$tokenData )return response()->json(['isValid'=>false],400); //redirect them anywhere you want if the token does not exist.
      
-     return response()->json(['isValid'=>true],200);
+     return response()->json([$tokenData,'isValid'=>true],200);
  }
 
 
