@@ -34,7 +34,7 @@ class passwordController extends Controller
        $token = $tokenData->token;
        $email = $request->email; // or $email = $tokenData->email;
        Mail::to($email)->send(new resentPassword($token));
-       return response()->json([$token,$email]);
+       return response()->json($token);
        /**
         * Send email to the email above with a link to your password reset
         * something like url('password-reset/' . $token)
