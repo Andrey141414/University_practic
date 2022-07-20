@@ -52,15 +52,14 @@ class passwordController extends Controller
 
  public function isshowPasswordResetForm(Request $request)
  {
-     $token = $request->get('token');
+     $token = $request->input('token');
      $tokenData = DB::table('password_resets')
      ->where('token', $token)->first();
 
-    return $token;
-     if ( !$tokenData )redirect('http://46.50.152.115:3000/reset-password'); //redirect them anywhere you want if the token does not exist.
+     if ( !$tokenData )response()->json(['isValid'=>true],200); //redirect them anywhere you want if the token does not exist.
      
      else 
-     return response()->json('well',200);
+     return response()->json(['isValid'=>false],200);
  }
 
 
