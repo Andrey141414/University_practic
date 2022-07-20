@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\ImageController;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -62,8 +64,9 @@ Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_im
 
 
 
-Route::get('/ping', function () {
-    return auth('api')->user()->id;
+Route::get('/ping', function (Request $request) {
+    
+    DB::table('password_resets')->where('email', $request->get('email'))->delete();
 })->name('ping');
 
 Route::post('/callback', function(Request $request){
@@ -72,3 +75,15 @@ Route::post('/callback', function(Request $request){
     
     return response()->json($request);
 });
+
+
+Route::controller(App\Http\Controllers\passwordController::class)->group(function () {
+    Route::post('/send_password_reset_token', 'sendPasswordResetToken');
+    Route::get('/password_reset', 'showPasswordResetForm')->name('showPasswordResetForm');
+    Route::post('/password_reset', 'showPasswordResetForm');
+});
+
+// Route::get('password-reset', 'PasswordController@showForm'); //I did not create this controller. it simply displays a view with a form to take the email
+// Route::post('password-reset', 'PasswordController@sendPasswordResetToken');
+// Route::get('reset-password/{token}', 'PasswordController@showPasswordResetForm');
+// Route::post('reset-password/{token}', 'PasswordController@resetPassword');
