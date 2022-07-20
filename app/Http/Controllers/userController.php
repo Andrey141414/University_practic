@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\CityModel;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\postModel;
+
 class userController extends Controller
 {
     public function userInfo(User $user)
@@ -20,5 +25,20 @@ class userController extends Controller
             'is_admin'=> $user->is_admin,
             'city'=> CityModel::find($user->id_city)->name,
             ]);
+    }
+
+
+    public function test()
+    {
+        // $arr = [];
+        // $arr[0] = 1;
+        // $arr[1] = 4;
+        $id = 18;
+        $id_post = 15;
+        $post = (new postModel())->where('id',$id_post)->first();
+        $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        
+        $post->save();
+        return response()->json($post);
     }
 }

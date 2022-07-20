@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-class ImageController extends Controller
+use App\Models\postModel;
+
+
+class postController extends Controller
 {
-    public function load_image(Request $request)
+    public function createPost(Request $request)
     {
         $id = auth('api')->user()->id;
         
@@ -25,21 +28,34 @@ class ImageController extends Controller
         
         
         $image = $request->input('image');
-        $data = str_replace(" ", "+", $image);
+        
+        //на стороне клиента
+        //$data = str_replace(" ", "+", $image);
+        $images = preg_split("/[\s,]+/",$image);
+        
         
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id);
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
-        $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/picture.jpeg';
+        
+
+        
+        //цикл
+        foreach ($images as $key => $data) {
+            $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/'.$key.'.jpeg';
+            $data = base64_decode($data);
+            Storage::disk("google")->put($path,$data);
+        }
 
 
-        $data = base64_decode($data);
-        Storage::disk("google")->put($path,$data);
+        // $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/picture.jpeg';
+        // $data = base64_decode($data);
+        // Storage::disk("google")->put($path,$data);
+        // //конец цикла
 
-
-//записать путь в базу
-//добавить в конфиги гугл
-
+        $post = (new postModel())->where('id',$id_post)->first();
+        $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        $post->save();
 
         //Storage::disk("google")->makeDirectory('DIRECTORY1');
         //$image = Storage::disk("google")->get('DIRECTORY1\hellowWord.txt');

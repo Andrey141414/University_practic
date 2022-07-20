@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Controllers\ImageController;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -52,22 +53,25 @@ Route::controller(App\Http\Controllers\tapeController::class)->group(function ()
     //
 });
 
+//фотографии
+Route::controller(App\Http\Controllers\postController::class)->group(function () {
+    Route::post('/create_post', 'createPost')->middleware('onlyAuthorized');
+    //
+});
+
 //
 
 
 
 
 
-Route::post('/load_image', [App\Http\Controllers\ImageController::class,'load_image']);
 
 
 
 
 
-Route::get('/ping', function (Request $request) {
-    
-    DB::table('password_resets')->where('email', $request->get('email'))->delete();
-})->name('ping');
+
+Route::get('/ping', [App\Http\Controllers\userController::class,'test'])->name('ping');
 
 Route::post('/callback', function(Request $request){
     
