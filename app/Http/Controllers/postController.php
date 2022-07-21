@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\postModel;
-
+use Illuminate\Support\Carbon;
 
 class postController extends Controller
 {
@@ -18,9 +18,8 @@ class postController extends Controller
         DB::table('post')->insert([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
-            'date' => $request->input('title'),
-            'view_count' => $request->input('title'),
-            'id_category' => $request->input('title'),
+            'date' => Carbon::now(),
+            'id_category' => $request->input('id_category'),
             'id_user' => $id,
         ]);
 
