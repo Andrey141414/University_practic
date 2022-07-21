@@ -26,7 +26,7 @@ class postController extends Controller
         $id_post =  DB::table('post')->max('id');
         
         
-        $image = $request->input('image');
+        $image = $request->input('image_set');
         
         //на стороне клиента
         //$data = str_replace(" ", "+", $image);
