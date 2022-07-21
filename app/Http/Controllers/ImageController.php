@@ -24,7 +24,7 @@ class ImageController extends Controller
         $id_post =  DB::table('post')->max('id');
         
         
-        $image = $request->input('image');
+        $image = $request->input('image_set');
         $data = str_replace(" ", "+", $image);
         
         
@@ -45,6 +45,8 @@ class ImageController extends Controller
         //$image = Storage::disk("google")->get('DIRECTORY1\hellowWord.txt');
     
         //$path = Storage::path('file.jpg');
-        return 200;
+        return response()->json([
+            'message' => 'Sucsessfuly'
+        ], 200);
     }
 }
