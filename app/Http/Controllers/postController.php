@@ -138,7 +138,7 @@ class postController extends Controller
 
         
         
-        return [((new postModel())->where('id_user',$id)->simplePaginate($items_num)),( $previews)];
+        return ((new postModel())->where('id_user',$id)->simplePaginate($items_num));
     }
    
 }
