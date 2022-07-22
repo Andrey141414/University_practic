@@ -56,8 +56,14 @@ Route::controller(App\Http\Controllers\tapeController::class)->group(function ()
 //фотографии
 Route::controller(App\Http\Controllers\postController::class)->group(function () {
     Route::post('/create_post', 'createPost')->middleware('onlyAuthorized');
+    Route::delete('/delete_post', 'deletePost')->middleware('onlyAuthorized');
+    Route::put('/change_post', 'changePost')->middleware('onlyAuthorized');
+    Route::get('/get_post', 'getPost');
+    Route::get('/my_posts', 'myPosts');
     //
 });
+
+
 
 //
 

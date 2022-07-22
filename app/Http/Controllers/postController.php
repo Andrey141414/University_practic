@@ -14,30 +14,24 @@ class postController extends Controller
     {
         $id = auth('api')->user()->id;
         
-
-        DB::table('post')->insert([
+        $post = (new postModel);
+        $post->insert([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
             'date' => Carbon::now(),
             'id_category' => $request->input('id_category'),
             'id_user' => $id,
         ]);
-
-        $id_post =  DB::table('post')->max('id');
+        $post->save();
+        $id_post =  $post->id;
         
         
-        $image = $request->input('image_set');
+        $images = $request->input('image_set');
         
-        //на стороне клиента
-        //$data = str_replace(" ", "+", $image);
-        $images = preg_split("/[\s,]+/",$image);
-        
-        
+        // = preg_split("/[\s,]+/",$image);
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id);
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
-        
-
         
         //цикл
         foreach ($images as $key => $data) {
@@ -45,21 +39,106 @@ class postController extends Controller
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
         }
-
-
-        // $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/picture.jpeg';
-        // $data = base64_decode($data);
-        // Storage::disk("google")->put($path,$data);
-        // //конец цикла
-
-        $post = (new postModel())->where('id',$id_post)->first();
+        //конец цикла
+        
         $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
         $post->save();
-
-        //Storage::disk("google")->makeDirectory('DIRECTORY1');
-        //$image = Storage::disk("google")->get('DIRECTORY1\hellowWord.txt');
-    
-        //$path = Storage::path('file.jpg');
-        return 200;
+        return response()->json(["message"=>"Data was saved"],200);
     }
+
+    public function deletePost(Request $request)
+    {
+        $id_post = $request->get('id_post');
+        $post = (new postModel())->where('id',$id_post)->first();
+        $path = $post->img_set_path;
+        $post->delete();
+        Storage::disk("google")->deleteDirectory($path);
+        return response()->json(["message"=>"Data was deleted"],200);
+
+    }
+    public function changePost(Request $request)
+    {
+        $id = auth('api')->user()->id;
+        $id_post = $request->input('id_post');
+        $post = (new postModel())->where('id',$id_post)->first();
+        //return response()->json($id_post,200);
+        $post->title = $request->input('title');
+        $post->description = $request->input('description');
+        $post->id_category = $request->input('id_category');
+
+        
+        Storage::disk("google")->deleteDirectory($post->img_set_path);
+
+        $image = $request->input('image_set');
+        $images = preg_split("/[\s,]+/",$image);
+        Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id);
+        Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
+
+        //цикл
+        foreach ($images as $key => $data) {
+            $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/'.$key.'.jpeg';
+            $data = base64_decode($data);
+            Storage::disk("google")->put($path,$data);
+        }
+        //конец цикла
+        
+        $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        $post->save();
+        return response()->json(["message"=>"Data was saved"],200);
+
+
+    }
+    
+
+    public function getPost(Request $request)
+    {
+        $id = 18;//auth('api')->user()->id;
+        $id_post = $request->get('id_post');
+        $post = (new postModel())->where('id',$id_post)->first();
+        $image_set = "";
+
+
+        $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        $images_path = Storage::disk("google")->files($path);
+        foreach ($images_path as $key => $file) {
+            $image_set = $image_set.' '.base64_encode(Storage::disk("google")->get($file));
+        }
+
+        return [$this->postInfo($post),$image_set];
+    }
+
+    public function postInfo(postModel $post)
+    {
+        return response()->json([
+            'id'=> $post->id,
+            'title'=> $post->title ,
+            'description' => $post->description,
+            'date'=> $post->date,
+            'id_category'=> $post->id_category,
+            'id_user'=> $post->id_user,
+            ]);
+    }
+
+
+    public function myPosts(Request $request)
+    {
+        $id = 18;// = auth('api')->user()->id;
+        $user_posts = (new postModel())->where('id_user',$id)->get();
+
+
+
+        $items_num = 2;
+        $previews = array();
+
+        for($i = 0;$i<$items_num;$i++)
+        {
+            $path = (new postModel())->where('id_user',$id)->simplePaginate($items_num)->items()[$i]->img_set_path;
+            array_push($previews,base64_encode(Storage::disk("google")->get($path.'/0.jpeg')));
+        }
+
+        
+        
+        return [((new postModel())->where('id_user',$id)->simplePaginate($items_num)),( $previews)];
+    }
+   
 }

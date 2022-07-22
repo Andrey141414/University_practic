@@ -28,17 +28,33 @@ class userController extends Controller
     }
 
 
-    public function test()
+    public function test(Request $request)
     {
-        // $arr = [];
-        // $arr[0] = 1;
-        // $arr[1] = 4;
-        $id = 18;
-        $id_post = 15;
-        $post = (new postModel())->where('id',$id_post)->first();
-        $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        // // $arr = [];
+        // // $arr[0] = 1;
+        // // $arr[1] = 4;
+        // $id = 18;
+        // $id_post = 15;
+        // $post = (new postModel())->where('id',$id_post)->first();
+        // $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        //(new postModel())->where('img_set_path', null)->delete();
         
-        $post->save();
-        return response()->json($post);
+
+        // $items_num = 3;
+        // $posts = new postModel();
+        // $previews = array();
+
+        // for($i = 0;$i<$items_num;$i++)
+        // {
+        //     $path = $posts->simplePaginate($items_num)->items()[$i]->img_set_path;
+        //     array_push($previews,base64_encode(Storage::disk("google")->get($path.'/0.jpeg')));
+        // }
+
+        
+        
+        // return [$path = $posts->simplePaginate($items_num),( $previews)];
+
+        $user_posts = (new postModel())->where('id_user',18)->get();
+        return (new postModel())->where('id_user',18)->simplePaginate(4)->items()[2]->img_set_path;
     }
 }
