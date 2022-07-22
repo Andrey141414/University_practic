@@ -54,7 +54,11 @@ class userController extends Controller
         
         // return [$path = $posts->simplePaginate($items_num),( $previews)];
 
-        $user_posts = (new postModel())->where('id_user',18)->get();
-        return (new postModel())->where('id_user',18)->simplePaginate(4)->items()[2]->img_set_path;
+        // $user_posts = (new postModel())->where('id_user',18)->get();
+        // return (new postModel())->where('id_user',18)->simplePaginate(4)->items()[2]->img_set_path;
+
+        $previews = array();
+        $previews  = (new postModel())->pluck('img_set_path')->toArray();
+        return $previews;
     }
 }

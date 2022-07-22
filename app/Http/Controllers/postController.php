@@ -135,10 +135,21 @@ class postController extends Controller
             $path = (new postModel())->where('id_user',$id)->simplePaginate($items_num)->items()[$i]->img_set_path;
             array_push($previews,base64_encode(Storage::disk("google")->get($path.'/0.jpeg')));
         }
-
-        
-        
+   
         return ((new postModel())->where('id_user',$id)->simplePaginate($items_num));
+    }
+
+    public function allPosts(Request $request)
+    {
+        $previews = array();
+        $previews  = (new postModel())->pluck('img_set_path')->toArray();
+        foreach ($previews as $key => $file)
+        {
+            $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
+        }
+         
+        
+        return [(new postModel())->all(),$previews];
     }
    
 }

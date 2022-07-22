@@ -60,6 +60,8 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::patch('/change_post', 'changePost')->middleware('onlyAuthorized');
     Route::get('/get_post', 'getPost');
     Route::get('/my_posts', 'myPosts');
+
+    Route::get('/all_posts', 'allPosts');
     //
 });
 
