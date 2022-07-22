@@ -142,14 +142,14 @@ class postController extends Controller
     public function allPosts(Request $request)
     {
         $previews = array();
-        $previews  = (new postModel())->pluck('img_set_path')->toArray();
-        foreach ($previews as $key => $file)
-        {
-            $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
-        }
+        //$previews  = (new postModel())->pluck('img_set_path')->toArray();
+        // foreach ($previews as $key => $file)
+        // {
+        //     $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
+        // }
          
         
-        return [(new postModel())->all(),$previews];
+        return [(new postModel())->all()];
     }
    
 }
