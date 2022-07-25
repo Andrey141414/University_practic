@@ -53,6 +53,7 @@ class userController extends Controller
 
         // } 
 
+        Storage::disk("local")->deleteDirectory('IN_GOOD_HANDS');
         $path = 'IN_GOOD_HANDS/12/111';
         $a = Storage::disk("google")->exists($path.'/0.jpeg');
         return response()->json($a);
