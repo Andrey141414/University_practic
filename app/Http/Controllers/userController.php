@@ -37,8 +37,25 @@ class userController extends Controller
         // $id_post = 15;
         // $post = (new postModel())->where('id',$id_post)->first();
         // $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
-        //(new postModel())->where('img_set_path', null)->delete();
+        //(new postModel())->where('title', null)->delete();
         
+        //Kernel
+        
+
+        // $posts = (new postModel())::all();
+        // foreach($posts as $post)
+        // {
+
+        //     $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+        //     $content = Storage::disk("google")->get($path.'/0.jpeg');
+        //     Storage::disk("local")->makeDirectory($path);
+        //     Storage::disk("local")->put($path.'/0.jpeg',$content);
+
+        // } 
+
+        $path = 'IN_GOOD_HANDS/12/111';
+        $a = Storage::disk("google")->exists($path.'/0.jpeg');
+        return response()->json($a);
 
         // $items_num = 3;
         // $posts = new postModel();
@@ -56,6 +73,8 @@ class userController extends Controller
 
         // $user_posts = (new postModel())->where('id_user',18)->get();
         // return (new postModel())->where('id_user',18)->simplePaginate(4)->items()[2]->img_set_path;
+
+
 
         $previews = array();
         $previews  = (new postModel())->pluck('img_set_path')->toArray();

@@ -20,6 +20,7 @@ class resentPassword extends Mailable
     public function __construct(string $token)
     {
         //
+        $this->subject  = 'Восстановление пароля';
         $this->token = $token;
     }
 
@@ -30,6 +31,6 @@ class resentPassword extends Mailable
      */
     public function build()
     {
-        return $this->view('emailResentPassword',[ "token" => $this -> token]);
+        return $this->view('emailResentPassword',[ "token" => $this -> token,'subject' => $this->subject]);
     }
 }

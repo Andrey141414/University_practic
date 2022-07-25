@@ -5,6 +5,10 @@ namespace App\Console;
 use App\Models\accessTokens;
 use App\Models\refreshTokens;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Models\postModel;
+
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -24,6 +28,19 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             refreshTokens::whereRaw('expires_at < now()')->delete();
+        })->daily();
+
+        $schedule->call(function () {
+            $posts = (new postModel())::all();
+            foreach($posts as $post)
+            {
+
+                $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+                $content = Storage::disk("google")->get($path.'/0.jpeg');
+                Storage::disk("local")->makeDirectory($path);
+                Storage::disk("local")->put($path.'/0.jpeg',$content);
+
+            } 
         })->daily();
 
        

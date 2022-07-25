@@ -19,7 +19,9 @@ class passwordController extends Controller
     public function sendPasswordResetToken(Request $request)
     {
         $user = User::where ('email', $request->email)->first();
-        if ( !$user ) return redirect()->back()->withErrors(['error' => '404']);
+        if ( !$user )return response()->json([
+            'message' => 'There is no so user'
+        ], 200);
     
         //create a new token to be sent to the user. 
         DB::table('password_resets')->insert([
@@ -34,7 +36,7 @@ class passwordController extends Controller
        $token = $tokenData->token;
        $email = $request->email; // or $email = $tokenData->email;
        Mail::to($email)->send(new resentPassword($token));
-       return response()->json($token);
+       return response()->json($token,200);
        /**
         * Send email to the email above with a link to your password reset
         * something like url('password-reset/' . $token)

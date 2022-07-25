@@ -7,6 +7,8 @@
     <title>Document</title>
 </head>
 <body>
-    <?php echo $code; ?>
+<p>Код подтверждения - </p>
+<?php echo($code); ?></a>
+
 </body>
 </html>

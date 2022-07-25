@@ -17,9 +17,11 @@ class testMailClass extends Mailable
      * @return void
      */
     public int $code;
+    //public $content = 'Код подтверждения';
     public function __construct(int $code)
     {
         //
+        $this->subject  = 'Код подтверждения';
         $this->code = $code;
     }
 
@@ -30,6 +32,6 @@ class testMailClass extends Mailable
      */
     public function build()
     {
-        return $this->view('blog',[ "code" => $this -> code]);
+        return $this->view('blog',[ "code" => $this -> code,'subject' => $this->subject ]);
     }
 }

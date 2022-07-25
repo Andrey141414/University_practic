@@ -21,7 +21,8 @@ class postController extends Controller
             'title' => 'required|string|between:1,50',
             //'description' => 'max:300',
             'id_category' => 'required',
-            'image_set' => 'required|between:1,5'
+            'image_set' => 'required|between:1,5',
+            'id_city' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -36,6 +37,7 @@ class postController extends Controller
         $post->date = Carbon::now();
         $post->id_category = $request->input('id_category');
         $post-> id_user = $id;
+        $post-> id_city = $request->input('id_city');
         
         $post->save();
         $id_post =  $post->id;
@@ -48,12 +50,17 @@ class postController extends Controller
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id);
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
+
+        Storage::disk("local")->makeDirectory('IN_GOOD_HANDS/'.$id);
+        Storage::disk("local")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
         
         //цикл
         foreach ($images as $key => $data) {
             $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/'.$key.'.jpeg';
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
+
+            Storage::disk("local")->put($path,$data);
         }
         //конец цикла
         
