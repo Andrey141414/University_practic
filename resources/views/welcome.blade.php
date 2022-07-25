@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>в добрые руки...</h1>
+    <h1>в добрые руки!!!</h1>
 </body>
 </html>
