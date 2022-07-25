@@ -16,14 +16,16 @@ class postController extends Controller
         
         $post = (new postModel);
         $post->insert([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'date' => Carbon::now(),
-            'id_category' => $request->input('id_category'),
+            // 'title' => $request->input('title'),
+            // 'description' => $request->input('description'),
+            // 'date' => Carbon::now(),
+            // 'id_category' => $request->input('id_category'),
             'id_user' => $id,
         ]);
-
+        $post->update();
         $id_post =  $post->id;
+       
+        
         //$post->save();
         
         
