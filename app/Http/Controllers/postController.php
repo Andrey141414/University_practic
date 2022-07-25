@@ -22,8 +22,10 @@ class postController extends Controller
             'id_category' => $request->input('id_category'),
             'id_user' => $id,
         ]);
-        $post->save();
+        
         $id_post =  $post->id;
+        $post->save();
+        
         
         
         $images = $request->input('image_set');
