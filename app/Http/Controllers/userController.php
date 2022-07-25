@@ -42,16 +42,16 @@ class userController extends Controller
         //Kernel
         
 
-        // $posts = (new postModel())::all();
-        // foreach($posts as $post)
-        // {
+        $posts = (new postModel())::all();
+        foreach($posts as $post)
+        {
 
-        //     $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-        //     $content = Storage::disk("google")->get($path.'/0.jpeg');
-        //     Storage::disk("local")->makeDirectory($path);
-        //     Storage::disk("local")->put($path.'/0.jpeg',$content);
+            $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+            $content = Storage::disk("google")->get($path.'/0.jpeg');
+            Storage::disk("local")->makeDirectory($path);
+            Storage::disk("local")->put($path.'/0.jpeg',$content);
 
-        // } 
+        } 
 
         //Storage::disk("local")->deleteDirectory('IN_GOOD_HANDS');
         $path = 'IN_GOOD_HANDS/12/111';
