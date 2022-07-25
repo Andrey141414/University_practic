@@ -61,8 +61,11 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::get('/get_post', 'getPost');
     Route::get('/my_posts', 'myPosts');
 
-    Route::get('/all_posts', 'allPosts');
+    Route::get('/all_posts', 'allPostsLocal');
+    Route::get('/all_posts_google', 'allPostsGoogle');
     //
+
+    Route::get('load_preview_to_heroku','loadPreviewToHeroku');
 });
 
 

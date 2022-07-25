@@ -30,30 +30,18 @@ class Kernel extends ConsoleKernel
             refreshTokens::whereRaw('expires_at < now()')->delete();
         })->daily();
 
-        $schedule->call(function () {
-            $posts = (new postModel())::all();
-            foreach($posts as $post)
-            {
-
-                $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-                $content = Storage::disk("google")->get($path.'/0.jpeg');
-                Storage::disk("local")->makeDirectory($path);
-                Storage::disk("local")->put($path.'/0.jpeg',$content);
-
-            } 
-        })->daily();
-
-        $schedule->call(function () {
+        
+        // $schedule->call(function () {
             
 
-                $path = 'IN_GOOD_HANDS/12/111';
+        //         $path = 'IN_GOOD_HANDS/12/111';
                 
-                Storage::disk("local")->makeDirectory($path);
-                Storage::disk('local')->put($path.'/example.txt', 'Contents');
+        //         Storage::disk("local")->makeDirectory($path);
+        //         Storage::disk('local')->put($path.'/example.txt', 'Contents');
                 
 
              
-        })->everyMinute();
+        // })->everyMinute();
 
        
 

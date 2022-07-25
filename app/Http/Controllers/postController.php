@@ -161,7 +161,7 @@ class postController extends Controller
         return ((new postModel())->where('id_user',$id)->simplePaginate($items_num));
     }
 
-    public function allPosts(Request $request)
+    public function allPostsLocal(Request $request)
     {
         $previews = array();
         $previews  = (new postModel())->pluck('img_set_path')->toArray();
@@ -171,9 +171,43 @@ class postController extends Controller
         }
          
         
-        return [(new postModel())->all(),$previews];
-        //return [(new postModel())->all()];
+        return [(new postModel())->simplePaginate(5),$previews];
     
+    }
+
+    public function allPostsGoogle(Request $request)
+    {
+        $previews = array();
+        $previews  = (new postModel())->pluck('img_set_path')->toArray();
+        foreach ($previews as $key => $file)
+        {
+            $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
+        }
+         
+        
+        return [(new postModel())->simplePaginate(5),$previews];
+    
+    }
+
+
+
+    public function loadPreviewToHeroku()
+    {
+        $posts = (new postModel())::all();
+        foreach($posts as $post)
+        {
+
+            $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+            $content = Storage::disk("google")->get($path.'/0.jpeg');
+            Storage::disk("local")->makeDirectory($path);
+            Storage::disk("local")->put($path.'/0.jpeg',$content);
+
+        } 
+
+        
+
+        return Storage::disk("local")->allDirectories();;
+
     }
    
 }
