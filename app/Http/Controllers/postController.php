@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\postModel;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class postController extends Controller
 {
@@ -14,20 +15,31 @@ class postController extends Controller
     {
         $id = auth('api')->user()->id;
         
-        $post = (new postModel);
-        $post->insert([
-            // 'title' => $request->input('title'),
-            // 'description' => $request->input('description'),
-            // 'date' => Carbon::now(),
-            // 'id_category' => $request->input('id_category'),
-            'id_user' => $id,
+        $post = (new postModel());
+        
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|between:1,50',
+            //'description' => 'max:300',
+            'id_category' => 'required',
+            'image_set' => 'required|between:1,5'
         ]);
-        $post->update();
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error'
+            ], 400);
+        }
+
+
+        $post->title = $request->input('title');
+        $post->description = $request->input('description');
+        $post->date = Carbon::now();
+        $post->id_category = $request->input('id_category');
+        $post-> id_user = $id;
+        
+        $post->save();
         $id_post =  $post->id;
-       
-        
-        //$post->save();
-        
+  
         
         
         $images = $request->input('image_set');
@@ -146,14 +158,16 @@ class postController extends Controller
     public function allPosts(Request $request)
     {
         $previews = array();
-        $previews  = (new postModel())->pluck('img_set_path')->toArray();
-        foreach ($previews as $key => $file)
-        {
-            $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
-        }
+        // $previews  = (new postModel())->pluck('img_set_path')->toArray();
+        // foreach ($previews as $key => $file)
+        // {
+        //     $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
+        // }
          
         
-        return [(new postModel())->all(),$previews];
+        //return [(new postModel())->all(),$previews];
+        return [(new postModel())->all()];
+    
     }
    
 }
