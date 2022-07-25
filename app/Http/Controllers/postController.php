@@ -48,10 +48,9 @@ class postController extends Controller
         
         // = preg_split("/[\s,]+/",$image);
         
-        Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id);
+        
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
-        Storage::disk("local")->makeDirectory('IN_GOOD_HANDS/'.$id);
         Storage::disk("local")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
         
         //цикл
@@ -165,15 +164,15 @@ class postController extends Controller
     public function allPosts(Request $request)
     {
         $previews = array();
-        // $previews  = (new postModel())->pluck('img_set_path')->toArray();
-        // foreach ($previews as $key => $file)
-        // {
-        //     $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
-        // }
+        $previews  = (new postModel())->pluck('img_set_path')->toArray();
+        foreach ($previews as $key => $file)
+        {
+            $previews[$key] = base64_encode(Storage::disk("local")->get($file.'/0.jpeg'));
+        }
          
         
-        //return [(new postModel())->all(),$previews];
-        return [(new postModel())->all()];
+        return [(new postModel())->all(),$previews];
+        //return [(new postModel())->all()];
     
     }
    

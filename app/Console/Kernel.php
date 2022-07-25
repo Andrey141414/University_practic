@@ -43,6 +43,18 @@ class Kernel extends ConsoleKernel
             } 
         })->daily();
 
+        $schedule->call(function () {
+            
+
+                $path = 'IN_GOOD_HANDS/12/111';
+                
+                Storage::disk("local")->makeDirectory($path);
+                Storage::disk('local')->put($path.'/example.txt', 'Contents');
+                
+
+             
+        })->everyMinute();
+
        
 
     }
