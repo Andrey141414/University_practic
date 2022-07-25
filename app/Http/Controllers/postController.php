@@ -171,7 +171,7 @@ class postController extends Controller
         }
          
         
-        return [(new postModel())->simplePaginate(5),$previews];
+        return [(new postModel())->all(),$previews];
     
     }
 
