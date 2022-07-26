@@ -173,7 +173,7 @@ class postController extends Controller
         $data = array();
         for($i = 0;$i< $items_num;$i++ )
         {
-        array_push( $data ,json_encode([
+         $data[$i] = json_encode([
             "id"=>$posts->paginate(4)->items()[$i]->id,
             "title"=>$posts->paginate(4)->items()[$i]->title,
             "description"=>$posts->paginate(4)->items()[$i]->description,
@@ -183,7 +183,7 @@ class postController extends Controller
             "view_count"=>$posts->paginate(4)->items()[$i]->view_count,
             "id_user"=>$posts->paginate(4)->items()[$i]->id_user,
             "id_city"=>$posts->paginate(4)->items()[$i]->id_city
-       ]));
+       ]);
         
     }
 
