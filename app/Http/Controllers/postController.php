@@ -51,7 +51,7 @@ class postController extends Controller
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
-        Storage::disk("local")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
+        Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
         
         //цикл
         foreach ($images as $key => $data) {
@@ -59,7 +59,7 @@ class postController extends Controller
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
 
-            Storage::disk("local")->put($path,$data);
+            Storage::disk("local")->put('public/'.$path,$data);
         }
         //конец цикла
         
@@ -161,7 +161,25 @@ class postController extends Controller
         return ((new postModel())->where('id_user',$id)->simplePaginate($items_num));
     }
 
-    public function allPostsLocal(Request $request)
+    public function allPostsData(Request $request)
+    {
+        $posts = (new postModel())->orderBy('id');
+        //return $posts->simplePaginate(4)->currentPage();
+        
+        $anwer = json_encode([
+        "page"=>$posts->paginate(4)->currentPage(),
+        "per_page"=>$posts->paginate(4)->perPage(),//count(),
+        "total"=>$posts->paginate(4)->total(),
+        "total_pages"=>$posts->paginate(4)->lastPage(),
+        "data"=>$posts->paginate(4)->items(),
+    ]);
+        return $anwer;
+        //->items()[0]->id;
+    
+    }
+
+
+    public function allPostsPhoto(Request $request)
     {
         $previews = array();
         $previews  = (new postModel())->pluck('img_set_path')->toArray();
@@ -170,24 +188,11 @@ class postController extends Controller
             $previews[$key] = base64_encode(Storage::disk("local")->get($file.'/0.jpeg'));
         }
          
-        
-        return [(new postModel())->all(),$previews];
+        return $previews;
     
     }
 
-    public function allPostsGoogle(Request $request)
-    {
-        $previews = array();
-        $previews  = (new postModel())->pluck('img_set_path')->toArray();
-        foreach ($previews as $key => $file)
-        {
-            $previews[$key] = base64_encode(Storage::disk("google")->get($file.'/0.jpeg'));
-        }
-         
-        
-        return [(new postModel())->all(),$previews];
-    
-    }
+
 
 
 
@@ -199,12 +204,10 @@ class postController extends Controller
 
             $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
             $content = Storage::disk("google")->get($path.'/0.jpeg');
-            Storage::disk("local")->makeDirectory($path);
-            Storage::disk("local")->put($path.'/0.jpeg',$content);
+            Storage::disk("local")->makeDirectory('public/'.$path);
+            Storage::disk("local")->put('public/'.$path.'/0.jpeg',$content);
 
         } 
-
-        
 
         return Storage::disk("local")->allDirectories();;
 
