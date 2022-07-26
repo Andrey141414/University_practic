@@ -169,8 +169,8 @@ class postController extends Controller
 
         //$items_num = $request->get('limit');
         
-        $items_num = $posts->paginate(10)->count;
-        
+        $items_num = $posts->paginate(10)->count();
+
         $data = [];
         for($i = 0;$i< $items_num;$i++ )
         {
