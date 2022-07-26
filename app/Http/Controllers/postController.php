@@ -176,8 +176,6 @@ class postController extends Controller
         $id = 18;
         $posts = (new postModel())->where('id_user',$id);
 
-        return $posts;
-
         return $this->GetPosts($posts);
     
     }
