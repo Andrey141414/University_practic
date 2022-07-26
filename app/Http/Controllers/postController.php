@@ -179,7 +179,7 @@ class postController extends Controller
             "description"=>$posts->paginate($items_num)->items()[$i]->description,
             "date"=>$posts->paginate($items_num)->items()[$i]->date,
             "is_active"=>$posts->paginate($items_num)->items()[$i]->is_active,
-            "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/jpeg.0',
+            "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg',
             "view_count"=>$posts->paginate($items_num)->items()[$i]->view_count,
             "id_user"=>$posts->paginate($items_num)->items()[$i]->id_user,
             "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city
