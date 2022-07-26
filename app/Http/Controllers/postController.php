@@ -168,7 +168,7 @@ class postController extends Controller
         
         $anwer = json_encode([
         "page"=>$posts->paginate(4)->currentPage(),
-        "per_page"=>$posts->paginate(4)->perPage(),//count(),
+        "per_page"=>$posts->paginate(4)->count(),//perPage(),,
         "total"=>$posts->paginate(4)->total(),
         "total_pages"=>$posts->paginate(4)->lastPage(),
         "data"=>$posts->paginate(4)->items(),
@@ -209,7 +209,7 @@ class postController extends Controller
 
         } 
 
-        return Storage::disk("local")->allDirectories();;
+        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles()];;
 
     }
    
