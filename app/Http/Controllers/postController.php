@@ -171,6 +171,16 @@ class postController extends Controller
     
     }
 
+    public function userPostsData(Request $request)
+    {
+        $id = 18;
+        $posts = (new postModel())->where('id_user',$id);
+
+        return $posts;
+
+        return $this->GetPosts($posts);
+    
+    }
 
     public function GetPosts(mixed $posts)
     {
