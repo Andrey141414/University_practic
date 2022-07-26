@@ -167,9 +167,9 @@ class postController extends Controller
         
 
 
+        $items_num = $request->get('limit');
         
-
-        $items_num = 4;
+        //$items_num = 4;
         $data = [];
         for($i = 0;$i< $items_num;$i++ )
         {
@@ -182,7 +182,8 @@ class postController extends Controller
             "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg',
             "view_count"=>$posts->paginate($items_num)->items()[$i]->view_count,
             "id_user"=>$posts->paginate($items_num)->items()[$i]->id_user,
-            "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city
+            "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city,
+            //"id_category"=>$posts->paginate($items_num)->items()[$i]->id_category
        ]);
         
     }
