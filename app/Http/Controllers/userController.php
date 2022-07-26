@@ -57,7 +57,7 @@ class userController extends Controller
         // $path = 'IN_GOOD_HANDS/12/111';
         // $a = Storage::disk("local")->exists($path.'/example.txt');
         
-        return count(Storage::disk("google")->allFiles('\IN_GOOD_HANDS\18\163'));
+        return Storage::url('\IN_GOOD_HANDS\81\162\0.jpeg');
 
         // $items_num = 3;
         // $posts = new postModel();

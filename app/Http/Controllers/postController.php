@@ -145,7 +145,7 @@ class postController extends Controller
 
 
    
-
+////////////
     public function allPostsData(Request $request)
     {
         $posts = (new postModel())->orderBy('id');
@@ -164,6 +164,10 @@ class postController extends Controller
         return $this->GetPosts($posts);
     
     }
+////////////
+
+
+
 
     public function GetPosts(mixed $posts)
     {
