@@ -167,9 +167,9 @@ class postController extends Controller
         
 
 
-        $items_num = $request->get('limit');
+        //$items_num = $request->get('limit');
         
-        //$items_num = 4;
+        $items_num = 10;
         $data = [];
         for($i = 0;$i< $items_num;$i++ )
         {
