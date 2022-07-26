@@ -170,28 +170,28 @@ class postController extends Controller
         
 
         $items_num = 4;
-        $data = array();
+        $data = [];
         for($i = 0;$i< $items_num;$i++ )
         {
-         $data[$i] = json_encode([
-            "id"=>$posts->paginate(4)->items()[$i]->id,
-            "title"=>$posts->paginate(4)->items()[$i]->title,
-            "description"=>$posts->paginate(4)->items()[$i]->description,
-            "date"=>$posts->paginate(4)->items()[$i]->date,
-            "is_active"=>$posts->paginate(4)->items()[$i]->is_active,
-            "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate(4)->items()[$i]->img_set_path.'/jpeg.0',
-            "view_count"=>$posts->paginate(4)->items()[$i]->view_count,
-            "id_user"=>$posts->paginate(4)->items()[$i]->id_user,
-            "id_city"=>$posts->paginate(4)->items()[$i]->id_city
+         $data[$i] = ([
+            "id"=>$posts->paginate($items_num)->items()[$i]->id,
+            "title"=>$posts->paginate($items_num)->items()[$i]->title,
+            "description"=>$posts->paginate($items_num)->items()[$i]->description,
+            "date"=>$posts->paginate($items_num)->items()[$i]->date,
+            "is_active"=>$posts->paginate($items_num)->items()[$i]->is_active,
+            "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/jpeg.0',
+            "view_count"=>$posts->paginate($items_num)->items()[$i]->view_count,
+            "id_user"=>$posts->paginate($items_num)->items()[$i]->id_user,
+            "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city
        ]);
         
     }
 
         $anwer = json_encode([
-        "page"=>$posts->paginate(4)->currentPage(),
-        "per_page"=>$posts->paginate(4)->count(),//perPage(),,
-        "total"=>$posts->paginate(4)->total(),
-        "total_pages"=>$posts->paginate(4)->lastPage(),
+        "page"=>$posts->paginate($items_num)->currentPage(),
+        "per_page"=>$posts->paginate($items_num)->count(),//perPage(),,
+        "total"=>$posts->paginate($items_num)->total(),
+        "total_pages"=>$posts->paginate($items_num)->lastPage(),
         "data"=>$data,
  
     ]);
