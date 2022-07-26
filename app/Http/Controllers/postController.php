@@ -169,7 +169,8 @@ class postController extends Controller
 
         //$items_num = $request->get('limit');
         
-        $items_num = 10;
+        $items_num = $posts->paginate(10)->count;
+        
         $data = [];
         for($i = 0;$i< $items_num;$i++ )
         {
@@ -202,17 +203,9 @@ class postController extends Controller
     }
 
 
-    public function allPostsPhoto(Request $request)
+    public function GetPosts(postModel $posts)
     {
-        $previews = array();
-        $previews  = (new postModel())->pluck('img_set_path')->toArray();
-        foreach ($previews as $key => $file)
-        {
-            $previews[$key] = base64_encode(Storage::disk("local")->get($file.'/0.jpeg'));
-        }
-         
-        return $previews;
-    
+            
     }
 
 
