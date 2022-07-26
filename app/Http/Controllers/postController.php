@@ -164,14 +164,36 @@ class postController extends Controller
     public function allPostsData(Request $request)
     {
         $posts = (new postModel())->orderBy('id');
-        //return $posts->simplePaginate(4)->currentPage();
         
+
+
+        
+
+        $items_num = 4;
+        $data = array();
+        for($i = 0;$i< $items_num;$i++ )
+        {
+        array_push( $data ,json_encode([
+            "id"=>$posts->paginate(4)->items()[$i]->id,
+            "title"=>$posts->paginate(4)->items()[$i]->title,
+            "description"=>$posts->paginate(4)->items()[$i]->description,
+            "date"=>$posts->paginate(4)->items()[$i]->date,
+            "is_active"=>$posts->paginate(4)->items()[$i]->is_active,
+            "img_set_path"=>env('APP_HEROKU_URL').'/storrage'.'/'.$posts->paginate(4)->items()[$i]->img_set_path.'/jpeg.0',
+            "view_count"=>$posts->paginate(4)->items()[$i]->view_count,
+            "id_user"=>$posts->paginate(4)->items()[$i]->id_user,
+            "id_city"=>$posts->paginate(4)->items()[$i]->id_city
+       ]));
+        
+    }
+
         $anwer = json_encode([
         "page"=>$posts->paginate(4)->currentPage(),
         "per_page"=>$posts->paginate(4)->count(),//perPage(),,
         "total"=>$posts->paginate(4)->total(),
         "total_pages"=>$posts->paginate(4)->lastPage(),
-        "data"=>$posts->paginate(4)->items(),
+        "data"=>$data,
+ 
     ]);
         return $anwer;
         //->items()[0]->id;
