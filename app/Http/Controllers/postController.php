@@ -169,14 +169,10 @@ class postController extends Controller
 
         //$items_num = $request->get('limit');
         
-        $items_num = $posts->paginate(10)->count();
-        if($items_num == 0)
-        {
-            return 200;
-        }
+        $items_num = 10;
 
         $data = [];
-        for($i = 0;$i< $items_num;$i++ )
+        for($i = 0;$i< $posts->paginate(10)->count();$i++ )
         {
          $data[$i] = ([
             "id"=>$posts->paginate($items_num)->items()[$i]->id,
