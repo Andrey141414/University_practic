@@ -164,11 +164,16 @@ class postController extends Controller
     public function allPostsData(Request $request)
     {
         $posts = (new postModel())->orderBy('id');
-        
+
+        //return (new postModel())->all()->type();
+
+        return $this->GetPosts($posts);
+    
+    }
 
 
-        //$items_num = $request->get('limit');
-        
+    public function GetPosts(mixed $posts)
+    {
         $items_num = 10;
 
         $data = [];
@@ -198,14 +203,6 @@ class postController extends Controller
  
     ]);
         return $anwer;
-        //->items()[0]->id;
-    
-    }
-
-
-    public function GetPosts(postModel $posts)
-    {
-            
     }
 
 
