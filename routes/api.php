@@ -58,9 +58,9 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::post('/create_post', 'createPost')->middleware('onlyAuthorized');
     Route::delete('/delete_post', 'deletePost')->middleware('onlyAuthorized');
     Route::patch('/change_post', 'changePost')->middleware('onlyAuthorized');
-    Route::get('/get_post', 'getPost');
-    Route::get('/my_posts', 'userPostsData');
 
+    Route::get('/get_post', 'getPost');
+    Route::get('/my_posts', 'userPostsData')->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
     //
 

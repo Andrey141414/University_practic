@@ -112,25 +112,21 @@ class postController extends Controller
     }
     
 
+
     public function getPost(Request $request)
     {
         $id = 18;//auth('api')->user()->id;
         $id_post = $request->get('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
-        $image_set = "";
+        $image_set = [];
 
 
-        $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
-        $images_path = Storage::disk("google")->files($path);
+        $path = 'public/IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        $images_path = Storage::disk("local")->files($path);
         foreach ($images_path as $key => $file) {
-            $image_set = $image_set.' '.base64_encode(Storage::disk("google")->get($file));
+            $image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
         }
 
-        return [$this->postInfo($post),$image_set];
-    }
-
-    public function postInfo(postModel $post)
-    {
         return response()->json([
             'id'=> $post->id,
             'title'=> $post->title ,
@@ -138,28 +134,17 @@ class postController extends Controller
             'date'=> $post->date,
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
-            ]);
+            '$image_set'=>$image_set
+            ]); 
     }
 
-
-    public function myPosts(Request $request)
+    public function postInfo(postModel $post)
     {
-        $id = 18;// = auth('api')->user()->id;
-        $user_posts = (new postModel())->where('id_user',$id)->get();
-
-
-
-        $items_num = 2;
-        $previews = array();
-
-        for($i = 0;$i<$items_num;$i++)
-        {
-            $path = (new postModel())->where('id_user',$id)->simplePaginate($items_num)->items()[$i]->img_set_path;
-            array_push($previews,base64_encode(Storage::disk("google")->get($path.'/0.jpeg')));
-        }
-   
-        return ((new postModel())->where('id_user',$id)->simplePaginate($items_num));
+    
     }
+
+
+   
 
     public function allPostsData(Request $request)
     {
@@ -173,7 +158,7 @@ class postController extends Controller
 
     public function userPostsData(Request $request)
     {
-        $id = 18;
+        $id = auth('api')->user()->id;
         $posts = (new postModel())->where('id_user',$id);
 
         return $this->GetPosts($posts);
@@ -224,10 +209,13 @@ class postController extends Controller
         {
 
             $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-            $content = Storage::disk("google")->get($path.'/0.jpeg');
             Storage::disk("local")->makeDirectory('public/'.$path);
-            Storage::disk("local")->put('public/'.$path.'/0.jpeg',$content);
-
+            for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
+            {
+                $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
+                
+                Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
+            }
         } 
 
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles()];;

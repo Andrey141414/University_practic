@@ -56,7 +56,8 @@ class userController extends Controller
         //Storage::disk("local")->deleteDirectory('IN_GOOD_HANDS');
         // $path = 'IN_GOOD_HANDS/12/111';
         // $a = Storage::disk("local")->exists($path.'/example.txt');
-        return Storage::disk("local")->allDirectories();
+        
+        return count(Storage::disk("google")->allFiles('\IN_GOOD_HANDS\18\163'));
 
         // $items_num = 3;
         // $posts = new postModel();
