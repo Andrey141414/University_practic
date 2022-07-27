@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\postModel;
+use Amp\Parallel\Worker\DefaultPool;
+
+use function Amp\ParallelFunctions\parallelMap;
+use function Amp\Promise\wait;
 
 class userController extends Controller
 {
@@ -57,6 +61,22 @@ class userController extends Controller
         // $path = 'IN_GOOD_HANDS/12/111';
         // $a = Storage::disk("local")->exists($path.'/example.txt');
         
+
+    //$pool = new DefaultPool(8);
+
+    $responses = wait(parallelMap([
+        'https://google.com/',
+        'https://github.com/',
+        'https://stackoverflow.com/',
+    ], function ($url) {
+        return file_get_contents($url);
+    }));
+    
+return $responses;
+
+    // $pageSources = collect($urls)->parallelMap(function ($url) {
+    // return file_get_contents($url);
+    // });
         return Storage::url('\IN_GOOD_HANDS\81\162\0.jpeg');
 
         // $items_num = 3;

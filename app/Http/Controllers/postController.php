@@ -9,6 +9,9 @@ use App\Models\postModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
+use function Amp\ParallelFunctions\parallelMap;
+use function Amp\Promise\wait;
+
 class postController extends Controller
 {
     public function createPost(Request $request)
@@ -210,28 +213,31 @@ class postController extends Controller
     {
         $posts = (new postModel())::all();
 
-        $path = [];
+        $paths = [];
         foreach($posts as  $key =>  $post)
         {
-            $path[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+            $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
         }
         //return $path;
 
 
+        parallelMap($paths,function($path){
 
-        foreach($posts as $key => $post)
-        {
+        
 
+
+        
+            
             //$path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-            Storage::disk("local")->makeDirectory('public/'.$path[$key]);
-            for($i = 0;$i < count(Storage::disk("google")->allFiles($path[$key]));$i++)
+            Storage::disk("local")->makeDirectory('public/'.$path);
+            for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
             {
-                $content = Storage::disk("google")->get($path[$key].'/'.$i.'.jpeg');
+                $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
                 
-                Storage::disk("local")->put('public/'.$path[$key].'/'.$i.'.jpeg',$content);
+                Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
             }
-        } 
-
+        
+        });
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles()];;
 
     }
