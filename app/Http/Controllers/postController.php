@@ -233,7 +233,7 @@ class postController extends Controller
             }
         
         });
-        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),200];;
+        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
 
     }
    
