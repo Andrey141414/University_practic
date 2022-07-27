@@ -209,16 +209,26 @@ class postController extends Controller
     public function loadPreviewToHeroku()
     {
         $posts = (new postModel())::all();
-        foreach($posts as $post)
+
+        $path = [];
+        foreach($posts as  $key =>  $post)
+        {
+            $path[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+        }
+        //return $path;
+
+
+
+        foreach($posts as $key => $post)
         {
 
-            $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-            Storage::disk("local")->makeDirectory('public/'.$path);
-            for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
+            //$path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+            Storage::disk("local")->makeDirectory('public/'.$path[$key]);
+            for($i = 0;$i < count(Storage::disk("google")->allFiles($path[$key]));$i++)
             {
-                $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
+                $content = Storage::disk("google")->get($path[$key].'/'.$i.'.jpeg');
                 
-                Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
+                Storage::disk("local")->put('public/'.$path[$key].'/'.$i.'.jpeg',$content);
             }
         } 
 
