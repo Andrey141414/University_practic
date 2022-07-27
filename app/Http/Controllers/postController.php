@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\postModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
@@ -118,13 +119,16 @@ class postController extends Controller
 
     public function getPost(Request $request)
     {
-        $id = 18;//auth('api')->user()->id;
+        //$id = //auth('api')->user()->id;
+        
         $id_post = $request->get('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
         $image_set = [];
 
+        $view_count = ($post->view_count);
+        $post->view_count = ++$view_count;
 
-        $path = 'public/IN_GOOD_HANDS/'.$id.'/'.$id_post;
+        $path = 'public/IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
         $images_path = Storage::disk("local")->files($path);
         foreach ($images_path as $key => $file) {
             $image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
@@ -218,21 +222,71 @@ class postController extends Controller
         {
             $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
         }
-        //return $path;
-
-
-        parallelMap($paths,function($path){
-
-            //$path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-            Storage::disk("local")->makeDirectory('public/'.$path);
+        
+        foreach($paths as $key=>$path)
+        {
+            
+            Storage::disk("local")->makeDirectory('public/IN_HOODHANDS');
             for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
             {
                 $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
-                
                 Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
             }
+        };
+
+        
+
+        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function loadPreviewToHerokuTest()
+    {
+        $posts = (new postModel())::all();
+
+        $paths = [];
+        foreach($posts as  $key =>  $post)
+        {
+            $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+        }
+        //return $path;
+
+
+        //return var_dump(wait(parallelMap([-1, 2, 3], 'abs')));
+// $i = 0;
+// $mass = [1,2,9,4,5];
+// parallelMap($mass,function($m){++$i;return ++$m;}));
+
+        $m = parallelMap($paths,function($path){
+
+            //$path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+           
+            Storage::disk("local")->makeDirectory('public/IN_HOODHANDS');
+            // for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
+            // {
+            //     $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
+                echo ('Hellow');
+            //     Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
+            // }
+            return true;
         
         });
+
+        
+
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
 
     }
