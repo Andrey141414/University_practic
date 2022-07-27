@@ -223,8 +223,6 @@ class postController extends Controller
 
         parallelMap($paths,function($path){
 
-        
-            
             //$path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
             Storage::disk("local")->makeDirectory('public/'.$path);
             for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
@@ -235,7 +233,7 @@ class postController extends Controller
             }
         
         });
-        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles()];;
+        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),200];;
 
     }
    
