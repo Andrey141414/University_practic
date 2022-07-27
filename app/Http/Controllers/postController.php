@@ -134,7 +134,7 @@ class postController extends Controller
             'date'=> $post->date,
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
-            '$image_set'=>$image_set
+            'image_set'=>$image_set
             ]); 
     }
 
