@@ -229,7 +229,7 @@ class postController extends Controller
         foreach($paths as $key=>$path)
         {
             
-            Storage::disk("local")->makeDirectory('public/IN_HOODHANDS');
+            Storage::disk("local")->makeDirectory('public/'.$path);
             for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
             {
                 $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
@@ -256,19 +256,19 @@ class postController extends Controller
 
 
 
-    public function loadPreviewToHerokuTest()
-    {
+    // public function loadPreviewToHerokuTest()
+    // {
 
-        $client = new Client([
-            // Base URI is used with relative requests
-            'base_uri' => 'http://127.0.0.1:8000/',
-            // You can set any number of default request options.
-            'timeout'  =>  2.0,
-        ]);
-        $promise = $client->getAsync('http://127.0.0.1:8000/api/load_preview_to_heroku');
-        return $promise;
+    //     $client = new Client([
+    //         // Base URI is used with relative requests
+    //         'base_uri' => 'http://127.0.0.1:8000/',
+    //         // You can set any number of default request options.
+    //         'timeout'  =>  2.0,
+    //     ]);
+    //     $promise = $client->getAsync('http://127.0.0.1:8000/api/load_preview_to_heroku');
+    //     return $promise;
   
-    }
+    // }
 
 }
   // $urls = [
