@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "amphp/parallel": "^1.4",
         "amphp/parallel-functions": "^1.1",
         "google/apiclient": "^2.12",
         "guzzlehttp/guzzle": "^7.2",
@@ -14,7 +15,8 @@
         "laravel/passport": "^10.4",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "masbug/flysystem-google-drive-ext": "^2.2"
+        "masbug/flysystem-google-drive-ext": "^2.2",
+        "spatie/laravel-collection-macros": "^7.11"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

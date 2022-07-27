@@ -65,6 +65,9 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     //
 
     Route::get('load_preview_to_heroku','loadPreviewToHeroku');
+
+    //тест
+    Route::get('load_preview_to_heroku_test','loadPreviewToHerokuTest');
 });
 
 
