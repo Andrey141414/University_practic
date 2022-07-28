@@ -42,8 +42,6 @@ class favoritePostsController extends Controller
         ], 200);
         }
 
-
-
         DB::table('favorite_post')->insert([
 
             'id_post'=>$id_post,
@@ -52,5 +50,46 @@ class favoritePostsController extends Controller
         
         return response()->json(["mewssage"=>"post has been added to favorites"],200); 
 
+    }
+
+
+    public function deletePostFromFavorite(Request $request)
+    {
+        $id_user = auth('api')->user()->id;
+        $id_post = $request->get('id_post');
+
+        $favoritePost = (new favoritePost())->where('id_post',$id_post)->first();
+        //$posts = (new postModel());
+
+        
+        if($favoritePost==null)
+        {
+            return response()->json([
+                "message" => "post is missing in favorite"
+            ], 404);
+        }
+        
+        $favoritePost->delete();
+        return response()->json(["mewssage"=>"post has been deleted from favorites"],200); 
+
+    }
+
+    public function allFavoritePostsID(Request $request)
+    {
+        $id_user = auth('api')->user()->id;
+
+        $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
+
+        return $id_posts;
+    }
+
+    public function allFavoritePosts(Request $request)
+    {
+        $id_user = auth('api')->user()->id;
+
+        $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
+        $posts = (new postModel())::find($id_posts);
+
+        return (new postController())->GetPosts($posts);
     }
 }

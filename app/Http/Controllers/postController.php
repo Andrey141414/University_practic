@@ -77,6 +77,7 @@ class postController extends Controller
         $path = $post->img_set_path;
         $post->delete();
         Storage::disk("google")->deleteDirectory($path);
+        Storage::disk("local")->deleteDirectory('public/'.$path);
         return response()->json(["message"=>"Data was deleted"],200);
 
     }
