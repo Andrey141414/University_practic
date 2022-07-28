@@ -79,7 +79,7 @@ Route::controller(App\Http\Controllers\favoritePostsController::class)->group(fu
     Route::delete('/delete_post_from_favorite', 'deletePostFromFavorite')->middleware('onlyAuthorized');
     Route::get('/all_favorite_posts', 'allFavoritePosts')->middleware('onlyAuthorized');
 
-    Route::get('/all_favorite_posts_id', 'allFavoritePosts')->middleware('onlyAuthorized');
+    Route::get('/all_favorite_posts_id', 'allFavoritePostsID')->middleware('onlyAuthorized');
 
 });
 
