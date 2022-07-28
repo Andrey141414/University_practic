@@ -44,11 +44,7 @@ class postController extends Controller
         $post->save();
         $id_post =  $post->id;
   
-        
-        
         $images = $request->input('image_set');
-        
-        // = preg_split("/[\s,]+/",$image);
         
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
@@ -74,6 +70,13 @@ class postController extends Controller
     {
         $id_post = $request->get('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
+        if($post==null)
+        {
+            return response()->json([
+                "message" => "post is missing"
+            ], 404);
+        }
+
         $path = $post->img_set_path;
         $post->delete();
         Storage::disk("google")->deleteDirectory($path);
@@ -86,6 +89,12 @@ class postController extends Controller
         $id = auth('api')->user()->id;
         $id_post = $request->input('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
+        if($post==null)
+        {
+            return response()->json([
+                "message" => "post is missing"
+            ], 404);
+        }
         //return response()->json($id_post,200);
         $post->title = $request->input('title');
         $post->description = $request->input('description');
@@ -94,16 +103,16 @@ class postController extends Controller
         
         Storage::disk("google")->deleteDirectory($post->img_set_path);
 
-        $image = $request->input('image_set');
-        $images = preg_split("/[\s,]+/",$image);
-        Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id);
+        $images = $request->input('image_set');
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
+        Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
         //цикл
         foreach ($images as $key => $data) {
             $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/'.$key.'.jpeg';
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
+            Storage::disk("local")->put('public/'.$path,$data);
         }
         //конец цикла
         
@@ -144,12 +153,6 @@ class postController extends Controller
             'id_city'=>$post->id_city
             ]); 
     }
-
-    public function postInfo(postModel $post)
-    {
-    
-    }
-
 
    
 ////////////

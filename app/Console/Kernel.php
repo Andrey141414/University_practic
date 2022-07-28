@@ -31,17 +31,39 @@ class Kernel extends ConsoleKernel
         })->daily();
 
         
-        // $schedule->call(function () {
+        $schedule->call(function () {
             
+        if (Storage::disk("local")->exists('public/IN_GOOD_HANDS/is_exist.txt')) {}
+        
+        else{
 
-        //         $path = 'IN_GOOD_HANDS/12/111';
-                
-        //         Storage::disk("local")->makeDirectory($path);
-        //         Storage::disk('local')->put($path.'/example.txt', 'Contents');
-                
+                $posts = (new postModel())::all();
 
+                $paths = [];
+                foreach($posts as  $key =>  $post)
+                {
+                    $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+                }
+                
+                foreach($paths as $key=>$path)
+                {
+                    
+                    Storage::disk("local")->makeDirectory('public/'.$path);
+                    for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
+                    {
+                        
+                        $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
+                        Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
+                        
+                        
+                    }
+                };
+                
+                $content = Storage::disk("google")->get('IN_GOOD_HANDS/is_exist.txt');
+                Storage::disk("local")->put('public/IN_GOOD_HANDS/is_exist.txt',$content);
+            }
              
-        // })->everyMinute();
+        })->everyMinute();
 
        
 
