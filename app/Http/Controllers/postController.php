@@ -240,7 +240,8 @@ class postController extends Controller
                 
             }
         };
-
+        $content = Storage::disk("google")->get('IN_GOOD_HANDS/is_exist.txt');
+        Storage::disk("local")->put('public/IN_GOOD_HANDS/is_exist.txt',$content);
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
     }
 
