@@ -249,10 +249,8 @@ class postController extends Controller
 
     public function loadPreviewToHerokuTest()
     {
-        //$path = Storage::disk("google")->url('IN_GOOD_HANDS/12/183/0.jpeg');
-        //new File(Storage::disk("google")->path('IN_GOOD_HANDS/12/183/0.jpeg'));
-        //Storage::putFileAs('public/'.$path.'/',new File('IN_GOOD_HANDS/12/183/'), $i.'txt');
-        return true;
+        Storage::disk("local")->deleteDirectory('/public/IN_GOOD_HANDS');
+        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
     }
 
 

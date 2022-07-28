@@ -53,7 +53,7 @@ Route::controller(App\Http\Controllers\tapeController::class)->group(function ()
     //
 });
 
-//фотографии
+//фотографии и посты 
 Route::controller(App\Http\Controllers\postController::class)->group(function () {
     Route::post('/create_post', 'createPost')->middleware('onlyAuthorized');
     Route::delete('/delete_post', 'deletePost')->middleware('onlyAuthorized');
@@ -67,7 +67,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::get('load_preview_to_heroku','loadPreviewToHeroku');
 
     //тест
-    Route::get('load_preview_to_heroku_test','loadPreviewToHerokuTest');
+    Route::get('delete_all_posts_from_heroku','loadPreviewToHerokuTest');
 });
 
 
