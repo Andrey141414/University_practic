@@ -4,17 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use App\Models\postModel;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Amp\MultiReasonException;
-use function Amp\ParallelFunctions\parallelMap;
-use function Amp\Promise\wait;
-use GuzzleHttp\Client;
-use Amp\Parallel\Worker;
-use Amp\Promise;
+
+
+use Illuminate\Http\File;
 
 class postController extends Controller
 {
@@ -144,7 +139,8 @@ class postController extends Controller
             'date'=> $post->date,
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
-            'image_set'=>$image_set
+            'image_set'=>$image_set,
+            'id_city'=>$post->id_city
             ]); 
     }
 
@@ -218,6 +214,7 @@ class postController extends Controller
 
     public function loadPreviewToHeroku()
     {
+       
         $posts = (new postModel())::all();
 
         $paths = [];
@@ -232,104 +229,26 @@ class postController extends Controller
             Storage::disk("local")->makeDirectory('public/'.$path);
             for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
             {
+                
                 $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
                 Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
+                
+                
             }
         };
-
-        
 
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
     }
 
 
 
+    public function loadPreviewToHerokuTest()
+    {
+        //$path = Storage::disk("google")->url('IN_GOOD_HANDS/12/183/0.jpeg');
+        //new File(Storage::disk("google")->path('IN_GOOD_HANDS/12/183/0.jpeg'));
+        //Storage::putFileAs('public/'.$path.'/',new File('IN_GOOD_HANDS/12/183/'), $i.'txt');
+        return true;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-    // public function loadPreviewToHerokuTest()
-    // {
-
-    //     $client = new Client([
-    //         // Base URI is used with relative requests
-    //         'base_uri' => 'http://127.0.0.1:8000/',
-    //         // You can set any number of default request options.
-    //         'timeout'  =>  2.0,
-    //     ]);
-    //     $promise = $client->getAsync('http://127.0.0.1:8000/api/load_preview_to_heroku');
-    //     return $promise;
-  
-    // }
 
 }
-  // $urls = [
-        //     'https://secure.php.net',
-        //     'https://amphp.org',
-        //     'https://github.com',
-        // ];
-        
-        // $promises = [];
-        // foreach ($urls as $url) {
-        //     $promises[$url] = Worker\enqueueCallable('file_get_contents', $url);
-        // }
-        
-        // $responses = Promise\wait(Promise\all($promises));
-        
-        // foreach ($responses as $url => $response) {
-        //     \printf("Read %d bytes from %s\n", \strlen($response), $url);
-        // }
-
-
-
-
-
-
-
-        //         $posts = (new postModel())::all();
-
-//         $paths = [];
-//         foreach($posts as  $key =>  $post)
-//         {
-//             $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-//         }
-        
-
-//         try{
-//       $collection = wait(parallelmap($paths,function($path){
-//         //use Illuminate\Support\Facades\Storage;
-//        //echo $path[0];
-//         if((Storage::disk("local")->makeDirectory('public/'.$path))==null)
-//        {
-//         return 1;
-//        }
-//        else{
-//         return 2;
-//        }
-//     }));
-// }
-//     catch (MultiReasonException $exception) {
-//         echo implode($exception->getReasons());
-//         return ($exception->getReasons());
-//     }
-
-//     echo $paths[0];
-//     return $collection;
-
-//         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
-
-//     }
-//     public function foo()
-//     {
-//         Storage::disk("local")->makeDirectory('public/IN');
-//         return [1,2,3];
-//     }
- 
