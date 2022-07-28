@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-
+use Illuminate\Support\Facades\Artisan;
 /**
  * Runs the scheduler every 60 seconds as expected to be done by cron.
  */
