@@ -49,7 +49,7 @@ class postController extends Controller
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
-        Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
+        //Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
         
         //цикл
         foreach ($images as $key => $data) {
@@ -57,7 +57,7 @@ class postController extends Controller
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
 
-            Storage::disk("local")->put('public/'.$path,$data);
+            //Storage::disk("local")->put('public/'.$path,$data);
         }
         //конец цикла
         
@@ -80,7 +80,7 @@ class postController extends Controller
         $path = $post->img_set_path;
         $post->delete();
         Storage::disk("google")->deleteDirectory($path);
-        Storage::disk("local")->deleteDirectory('public/'.$path);
+        //Storage::disk("local")->deleteDirectory('public/'.$path);
         return response()->json(["message"=>"Data was deleted"],200);
 
     }
@@ -104,14 +104,14 @@ class postController extends Controller
 
         $images = $request->input('image_set');
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
-        Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
+      //Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
         //цикл
         foreach ($images as $key => $data) {
             $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/'.$key.'.jpeg';
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
-            Storage::disk("local")->put('public/'.$path,$data);
+            //Storage::disk("local")->put('public/'.$path,$data);
         }
         //конец цикла
         
@@ -220,42 +220,42 @@ class postController extends Controller
 
 
 
-    public function loadPreviewToHeroku()
-    {
+    // public function loadPreviewToHeroku()
+    // {
        
-        $posts = (new postModel())::all();
+    //     $posts = (new postModel())::all();
 
-        $paths = [];
-        foreach($posts as  $key =>  $post)
-        {
-            $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-        }
+    //     $paths = [];
+    //     foreach($posts as  $key =>  $post)
+    //     {
+    //         $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
+    //     }
         
-        foreach($paths as $key=>$path)
-        {
+    //     foreach($paths as $key=>$path)
+    //     {
             
-            Storage::disk("local")->makeDirectory('public/'.$path);
-            for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
-            {
+    //         Storage::disk("local")->makeDirectory('public/'.$path);
+    //         for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
+    //         {
                 
-                $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
-                Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
+    //             $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
+    //             Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
                 
                 
-            }
-        };
-        $content = Storage::disk("google")->get('IN_GOOD_HANDS/is_exist.txt');
-        Storage::disk("local")->put('public/IN_GOOD_HANDS/is_exist.txt',$content);
-        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
-    }
+    //         }
+    //     };
+    //     $content = Storage::disk("google")->get('IN_GOOD_HANDS/is_exist.txt');
+    //     Storage::disk("local")->put('public/IN_GOOD_HANDS/is_exist.txt',$content);
+    //     return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
+    // }
 
 
 
-    public function loadPreviewToHerokuTest()
-    {
-        Storage::disk("local")->deleteDirectory('/public/IN_GOOD_HANDS');
-        return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
-    }
+    // public function loadPreviewToHerokuTest()
+    // {
+    //     Storage::disk("local")->deleteDirectory('/public/IN_GOOD_HANDS');
+    //     return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
+    // }
 
 
 }
