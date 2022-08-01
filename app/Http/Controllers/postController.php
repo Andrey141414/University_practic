@@ -183,18 +183,6 @@ class postController extends Controller
 
 
 
-        // if(isset($data['sort_by']))
-        // {
-        //     if($data['sort_by']=='views_count')
-        //     {
-        //         //$query->orderBy('view_count');
-        //     }
-        //     if($data['sort_by']=='date')
-        //     {
-        //         //$query->orderBy('date');
-        //     }
-        // }
-
         if(isset($data['sort_type']))
         {
             if($data['sort_type']=='asc')
@@ -209,9 +197,7 @@ class postController extends Controller
 
         $posts = $query->get();
 
-        //$posts = (new postModel())->orderBy('id')->where('is_active');
-
-        //return (new postModel())->all()->type();
+        $posts = $posts->where('is_active');
 
         return $this->GetPosts($posts);
     
@@ -251,6 +237,7 @@ class postController extends Controller
             "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city,
             "id_category"=>$posts->paginate($items_num)->items()[$i]->id_category,
             //"id_category"=>$posts->paginate($items_num)->items()[$i]->id_category
+            
        ]);
         
     }
