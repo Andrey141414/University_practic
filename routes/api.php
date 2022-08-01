@@ -66,7 +66,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
 
     Route::get('get_phone_number','getPhoneNumber')->middleware('onlyAuthorized');
     //
-    Route::get('change_post_active','changePostActive');//->middleware('onlyAuthorized');
+    Route::patch('change_post_active','changePostActive');//->middleware('onlyAuthorized');
 
     Route::get('load_preview_to_heroku','loadPreviewToHeroku');
 
