@@ -50,7 +50,7 @@ class postController extends Controller
         
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
-        //Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
+        Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
         
         //цикл
         foreach ($images as $key => $data) {
@@ -58,7 +58,7 @@ class postController extends Controller
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
 
-            //Storage::disk("local")->put('public/'.$path,$data);
+            Storage::disk("local")->put('public/'.$path,$data);
         }
         //конец цикла
         
@@ -81,7 +81,7 @@ class postController extends Controller
         $path = $post->img_set_path;
         $post->delete();
         Storage::disk("google")->deleteDirectory($path);
-        //Storage::disk("local")->deleteDirectory('public/'.$path);
+        Storage::disk("local")->deleteDirectory('public/'.$path);
         return response()->json(["message"=>"Data was deleted"],200);
 
     }
@@ -105,14 +105,14 @@ class postController extends Controller
 
         $images = $request->input('image_set');
         Storage::disk("google")->makeDirectory('IN_GOOD_HANDS/'.$id.'/'.$id_post);
-      //Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
+        Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
 
         //цикл
         foreach ($images as $key => $data) {
             $path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post.'/'.$key.'.jpeg';
             $data = base64_decode($data);
             Storage::disk("google")->put($path,$data);
-            //Storage::disk("local")->put('public/'.$path,$data);
+            Storage::disk("local")->put('public/'.$path,$data);
         }
         //конец цикла
         
@@ -136,13 +136,10 @@ class postController extends Controller
         $view_count = ($post->view_count);
         $post->view_count = ++$view_count;
 
-        //$path = 'public/IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
-        $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
-        //$images_path = Storage::disk("local")->files($path);
-        $images_path = Storage::disk("google")->files($path);
+        $path = 'public/IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
+        $images_path = Storage::disk("local")->files($path);
         foreach ($images_path as $key => $file) {
-            //$image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
-            $image_set[$key] = (Storage::disk("google")->url($file));
+            $image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
         }
 
         return response()->json([
@@ -195,8 +192,7 @@ class postController extends Controller
             "description"=>$posts->paginate($items_num)->items()[$i]->description,
             "date"=>$posts->paginate($items_num)->items()[$i]->date,
             "is_active"=>$posts->paginate($items_num)->items()[$i]->is_active,
-            //"img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg',
-            "img_set_path"=>Storage::disk("google")->url($posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg'),
+            "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg',
             "view_count"=>$posts->paginate($items_num)->items()[$i]->view_count,
             "id_user"=>$posts->paginate($items_num)->items()[$i]->id_user,
             "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city,
