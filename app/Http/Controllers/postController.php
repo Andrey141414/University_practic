@@ -8,9 +8,7 @@ use App\Models\postModel;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
-
-
-use Illuminate\Http\File;
+use App\Http\Requests\postFilterRequest;
 
 class postController extends Controller
 {
@@ -162,9 +160,24 @@ class postController extends Controller
 
    
 ////////////
-    public function allPostsData(Request $request)
+    public function allPostsData(postFilterRequest $request)
     {
-        $posts = (new postModel())->orderBy('id')->where('is_active',true);
+
+        $data=$request->validated();
+
+        $query = postModel::query();
+
+        if(isset($data['id_category']))
+        {
+            $query->where('id_category',$data['id_category']);
+        }
+        if(isset($data['id_city']))
+        {
+            $query->where('id_city',$data['id_city']);
+        }
+        $posts = $query->get();
+
+        //$posts = (new postModel())->orderBy('id')->where('is_active');
 
         //return (new postModel())->all()->type();
 
@@ -174,6 +187,8 @@ class postController extends Controller
 
     public function userPostsData(Request $request)
     {
+
+        
         $id = auth('api')->user()->id;
         $posts = (new postModel())->where('id_user',$id);
 
