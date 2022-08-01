@@ -142,6 +142,9 @@ class postController extends Controller
             $image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
         }
 
+        $user = (new User())->where('id',$post->id_user)->first();
+
+
         return response()->json([
             'id'=> $post->id,
             'title'=> $post->title ,
@@ -150,7 +153,9 @@ class postController extends Controller
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
             'image_set'=>$image_set,
-            'id_city'=>$post->id_city
+            'id_city'=>$post->id_city,
+            'user_name'=>$user->name,
+            'user_created_at'=>$user->created_at
             ]); 
     }
 
