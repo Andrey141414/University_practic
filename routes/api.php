@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 // header("Access-Control-Allow-Headers: *");
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,boundary,Content-Length');
+header("Set-Cookie: cross-site-cookie=whatever; SameSite=None; Secure");
 //header('Access-Control-Allow-Origin: *');
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -62,6 +63,8 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::get('/get_post', 'getPost');
     Route::get('/my_posts', 'userPostsData');//->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
+
+    Route::get('get_phone_number','getPhoneNumber');//->middleware('onlyAuthorized');
     //
 
     Route::get('load_preview_to_heroku','loadPreviewToHeroku');

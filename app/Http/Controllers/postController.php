@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\postModel;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
@@ -217,6 +218,13 @@ class postController extends Controller
     }
 
 
+    public function getPhoneNumber(Request $request)
+    {
+        $id_post = $request->get('id_post');
+        $id_user = (new postModel())->where('id',$id_post)->first()->id_user;
+        $phone_number = (new User())->where('id',$id_user)->first()->phone_number;
+        return $phone_number;
+    }
 
 
 
