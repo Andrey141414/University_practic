@@ -155,7 +155,7 @@ class postController extends Controller
             'image_set'=>$image_set,
             'id_city'=>$post->id_city,
             'user_name'=>$user->name,
-            'user_created_at'=>$user->created_at
+            'user_created_at'=>date('d-m-Y', strtotime($user->created_at)) 
             ]); 
     }
 
