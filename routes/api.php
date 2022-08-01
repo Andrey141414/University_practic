@@ -64,7 +64,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::get('/my_posts', 'userPostsData');//->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
 
-    Route::get('get_phone_number','getPhoneNumber');//->middleware('onlyAuthorized');
+    Route::get('get_phone_number','getPhoneNumber')->middleware('onlyAuthorized');
     //
 
     Route::get('load_preview_to_heroku','loadPreviewToHeroku');
