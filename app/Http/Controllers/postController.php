@@ -147,7 +147,7 @@ class postController extends Controller
             'id'=> $post->id,
             'title'=> $post->title ,
             'description' => $post->description,
-            'date'=> $post->date,
+            'date'=> date('d-m-Y', strtotime($post->date)),
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
             'image_set'=>$image_set,
@@ -175,6 +175,38 @@ class postController extends Controller
         {
             $query->where('id_city',$data['id_city']);
         }
+
+        if(isset($data['title']))
+        {
+            $query->where('title','ilike',"%{$data['title']}%");
+        }
+
+
+
+        // if(isset($data['sort_by']))
+        // {
+        //     if($data['sort_by']=='views_count')
+        //     {
+        //         //$query->orderBy('view_count');
+        //     }
+        //     if($data['sort_by']=='date')
+        //     {
+        //         //$query->orderBy('date');
+        //     }
+        // }
+
+        if(isset($data['sort_type']))
+        {
+            if($data['sort_type']=='asc')
+            {
+                $query->orderBy($data['sort_by'],'asc');
+            }
+            if($data['sort_type']=='desc')
+            {
+                $query->orderBy($data['sort_by'],'desc');
+            }
+        }
+
         $posts = $query->get();
 
         //$posts = (new postModel())->orderBy('id')->where('is_active');

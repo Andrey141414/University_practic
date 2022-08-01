@@ -25,7 +25,10 @@ class postFilterRequest extends FormRequest
     {
         return [
             'id_category'=> '',
-            'id_city'=>''
+            'id_city'=>'',
+            'title'=>'string',
+            'sort_by'=>'string',
+            'sort_type'=>'string'
         ];
     }
 }
