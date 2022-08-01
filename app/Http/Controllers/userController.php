@@ -35,6 +35,7 @@ class userController extends Controller
     public function test(Request $request)
     {
 
+        return Storage::disk("google")->url('IN_GOOD_HANDS/18/237/0.jpeg');
 
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];
         // // $arr = [];
@@ -67,15 +68,7 @@ class userController extends Controller
 
     //$pool = new DefaultPool(8);
 
-    $responses = wait(parallelMap([
-        'https://google.com/',
-        'https://github.com/',
-        'https://stackoverflow.com/',
-    ], function ($url) {
-        return file_get_contents($url);
-    }));
-    
-return $responses;
+ 
 
     // $pageSources = collect($urls)->parallelMap(function ($url) {
     // return file_get_contents($url);

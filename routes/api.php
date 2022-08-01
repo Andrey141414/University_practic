@@ -104,8 +104,3 @@ Route::controller(App\Http\Controllers\passwordController::class)->group(functio
     Route::post('/is_valid_token', 'isshowPasswordResetForm')->name('showPasswordResetForm');
     Route::post('/password_reset', 'resetPassword');
 });
-
-// Route::get('password-reset', 'PasswordController@showForm'); //I did not create this controller. it simply displays a view with a form to take the email
-// Route::post('password-reset', 'PasswordController@sendPasswordResetToken');
-// Route::get('reset-password/{token}', 'PasswordController@showPasswordResetForm');
-// Route::post('reset-password/{token}', 'PasswordController@resetPassword');
