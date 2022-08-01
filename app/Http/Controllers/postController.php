@@ -141,7 +141,7 @@ class postController extends Controller
         foreach ($images_path as $key => $file) {
             $image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
         }
-
+        $post->save();
         $user = (new User())->where('id',$post->id_user)->first();
 
 
@@ -154,6 +154,7 @@ class postController extends Controller
             'id_user'=> $post->id_user,
             'image_set'=>$image_set,
             'id_city'=>$post->id_city,
+            'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)) 
             ]); 
@@ -163,7 +164,7 @@ class postController extends Controller
 ////////////
     public function allPostsData(Request $request)
     {
-        $posts = (new postModel())->orderBy('id');
+        $posts = (new postModel())->orderBy('id')->where('is_active',true);
 
         //return (new postModel())->all()->type();
 
@@ -195,7 +196,7 @@ class postController extends Controller
             "id"=>$posts->paginate($items_num)->items()[$i]->id,
             "title"=>$posts->paginate($items_num)->items()[$i]->title,
             "description"=>$posts->paginate($items_num)->items()[$i]->description,
-            "date"=>$posts->paginate($items_num)->items()[$i]->date,
+            "date"=>date('d-m-Y', strtotime($posts->paginate($items_num)->items()[$i]->date)),
             "is_active"=>$posts->paginate($items_num)->items()[$i]->is_active,
             "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg',
             "view_count"=>$posts->paginate($items_num)->items()[$i]->view_count,
@@ -215,6 +216,8 @@ class postController extends Controller
         "data"=>$data,
  
     ]);
+
+
         return $anwer;
     }
 
@@ -227,6 +230,36 @@ class postController extends Controller
         return $phone_number;
     }
 
+
+
+    public function changePostActive(Request $request)
+    {
+        $id_post = $request->get('id_post');
+        $post = (new postModel())->where('id',$id_post)->first();
+        
+        if($post == false)
+        {
+            return response()->json(["message"=>"There is no so post"],404);    
+        }
+
+
+        if($post->is_active)
+        {
+            $is_active = false;
+            $answer = json_encode(["message"=>"Post is not active"]);
+            
+        }
+        else
+        {
+            $is_active = true;
+            $answer = json_encode(["message"=>"Post is active"]);
+        }
+
+        $post->is_active = $is_active;
+        $post->save();
+        return $answer;
+    }
+    
 
 
     public function loadPreviewToHeroku()
