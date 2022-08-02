@@ -30,7 +30,7 @@ class userController extends Controller
             'blocked_admin'=> $user->blocked_admin,
             'num_login_attempts'=> $user->num_login_attempts,
             'is_admin'=> $user->is_admin,
-            'city'=> CityModel::find($user->id_city)->id,
+            'id_city'=> CityModel::find($user->id_city)->id,
             'addresses'=> (AddressModel::where('id_user',$user->id))->get()
             ]);
     }
