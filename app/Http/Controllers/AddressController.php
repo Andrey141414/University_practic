@@ -9,16 +9,59 @@ use Nette\Utils\Json;
 
 class AddressController extends Controller
 {
-    public function foo(Request $request)
+    public function addNewAddress(Request $request)
     {
-        $model = new AddressModel();
-        //Storage::disk('public')->put('movies.json', response()->json($request->input("address")));
-        //$model->id_user = 1;
+        $id_user = auth('api')->user()->id;
+        $address = new AddressModel();
 
-        $model->title = json_encode( $request->input());
-        $model->titleStr = $request->input('title');
-        $model->save();
-        return response()->json($model::all(),200);
-   // return $request->input();
+        if($address->where('id_user',$id_user)->count()>=5)
+        {
+            return response()->json([
+                "message" => "More 5 addresses",
+            ], 507);
+        }
+        $address->title = $request->input('title');
+        $address->id_user=$id_user;
+        $address->save();
+        return response()->json($address::all(),200);
+    }
+
+    public function deleteAddress(Request $request){
+
+        //$id_user = auth('api')->user()->id;
+        //$title = $request->get('title');
+        $id_address = $request->get('id_address');
+        $address = (new AddressModel())->where('id',$id_address)->first();
+
+
+        
+        if($address==null)
+        {
+            return response()->json([
+                "message" => "There is no so address",
+            ], 204); 
+        }
+        $address->delete();
+
+        return 200;
+    }
+
+    
+    public function changeAddress(Request $request)
+    {
+        
+        $id_address = $request->input('id_address');
+        $address = (new AddressModel())->where('id',$id_address)->first();
+        
+        if($address==null)
+        {
+            return response()->json([
+                "message" => "There is no so address",
+            ], 204); 
+        }
+
+        $address->title = $request->input('title');
+        $address->save();
+        return response()->json($address::all(),200);
     }
 }

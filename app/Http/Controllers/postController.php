@@ -23,7 +23,8 @@ class postController extends Controller
             //'description' => 'max:300',
             'id_category' => 'required',
             'image_set' => 'required|between:1,5',
-            'id_city' => 'required'
+            'id_city' => 'required',
+            'id_address'=>'required'
         ]);
 
         if ($validator->fails()) {
@@ -39,6 +40,7 @@ class postController extends Controller
         $post->id_category = $request->input('id_category');
         $post-> id_user = $id;
         $post-> id_city = $request->input('id_city');
+        $post-> id_address = $request->input('id_address');
         
         $post->save();
         $id_post =  $post->id;
@@ -83,6 +85,10 @@ class postController extends Controller
         return response()->json(["message"=>"Data was deleted"],200);
 
     }
+
+
+
+
     public function changePost(Request $request)
     {
         $id = auth('api')->user()->id;
@@ -92,11 +98,30 @@ class postController extends Controller
         {
             return response()->json([
                 "message" => "post is missing"
-            ], 404);
+            ], 204);
         }
+
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|between:1,50',
+            //'description' => 'max:300',
+            'id_category' => 'required',
+            'image_set' => 'required|between:1,5',
+            'id_city' => 'required',
+            'id_address'=>'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error'
+            ], 400);
+        }
+
+
         $post->title = $request->input('title');
         $post->description = $request->input('description');
         $post->id_category = $request->input('id_category');
+        $post->id_address = $request->input('id_address');
 
         
         Storage::disk("google")->deleteDirectory($post->img_set_path);
@@ -203,13 +228,22 @@ class postController extends Controller
     
     }
 
-    public function userPostsData(Request $request)
+    public function userPostsData(postFilterRequest $request)
     {
-
-        
+        $data=$request->validated();
+        $query = postModel::query();
         $id = auth('api')->user()->id;
-        $posts = (new postModel())->where('id_user',$id);
-
+        
+        if(isset($data['title']))
+        {
+            $query->where('title','ilike',"%{$data['title']}%");
+        }
+        
+        $posts = $query->get();
+        $posts = $posts->where('id_user',$id);
+        
+        
+        
         return $this->GetPosts($posts);
     
     }

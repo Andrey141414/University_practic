@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\postModel;
 use Amp\Parallel\Worker\DefaultPool;
+use App\Models\AddressModel;
+use Faker\Provider\ar_EG\Address;
 
 use function Amp\ParallelFunctions\parallelMap;
 use function Amp\Promise\wait;
@@ -18,6 +20,7 @@ class userController extends Controller
 {
     public function userInfo(User $user)
     {
+        
         return response()->json([
             'id'=> $user->id,
             'email'=> $user->email ,
@@ -27,7 +30,8 @@ class userController extends Controller
             'blocked_admin'=> $user->blocked_admin,
             'num_login_attempts'=> $user->num_login_attempts,
             'is_admin'=> $user->is_admin,
-            'city'=> CityModel::find($user->id_city)->name,
+            'city'=> CityModel::find($user->id_city)->id,
+            'addresses'=> (AddressModel::where('id_user',$user->id))->get()
             ]);
     }
 

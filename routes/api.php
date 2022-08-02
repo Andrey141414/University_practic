@@ -30,7 +30,7 @@ header("Set-Cookie: cross-site-cookie=whatever; SameSite=None; Secure");
 //     return $request->user();
 // });
 
-Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
+//Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 //Роуты авторизации
 Route::controller(App\Http\Controllers\Auth\LoginController::class)->group(function () {
@@ -87,6 +87,12 @@ Route::controller(App\Http\Controllers\favoritePostsController::class)->group(fu
 
 
 
+Route::controller(App\Http\Controllers\AddressController::class)->group(function () {
+    Route::post('/add_new_address', 'addNewAddress')->middleware('onlyAuthorized');
+    Route::delete('/delete_address', 'deleteAddress')->middleware('onlyAuthorized');
+    Route::patch('/change_address', 'changeAddress')->middleware('onlyAuthorized');
+    //Route::get('/all_favorite_posts_id', 'allFavoritePostsID')->middleware('onlyAuthorized');
+});
 
 
 
