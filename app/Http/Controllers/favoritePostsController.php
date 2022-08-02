@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\postModel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\postFilterRequest;
 class favoritePostsController extends Controller
+
 {
     //
     public function addPostToFavorive(Request $request)
