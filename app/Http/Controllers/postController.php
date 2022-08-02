@@ -69,6 +69,7 @@ class postController extends Controller
 
     public function deletePost(Request $request)
     {
+        
         $id_post = $request->get('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
         if($post==null)
@@ -76,6 +77,13 @@ class postController extends Controller
             return response()->json([
                 "message" => "post is missing"
             ], 404);
+        }
+        $id_user = auth('api')->user()->id;
+        if($post->id_user != $id_user)
+        {
+            return response()->json([
+                "message" => "There is no so address for you",
+            ], 204);
         }
 
         $path = $post->img_set_path;
@@ -100,7 +108,13 @@ class postController extends Controller
                 "message" => "post is missing"
             ], 204);
         }
-
+        $id_user = auth('api')->user()->id;
+        if($post->id_user != $id_user)
+        {
+            return response()->json([
+                "message" => "There is no so address for you",
+            ], 204);
+        }
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|between:1,50',

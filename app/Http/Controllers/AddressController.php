@@ -28,8 +28,8 @@ class AddressController extends Controller
 
     public function deleteAddress(Request $request){
 
-        //$id_user = auth('api')->user()->id;
-        //$title = $request->get('title');
+        $id_user = auth('api')->user()->id;
+        
         $id_address = $request->get('id_address');
         $address = (new AddressModel())->where('id',$id_address)->first();
 
@@ -41,6 +41,12 @@ class AddressController extends Controller
                 "message" => "There is no so address",
             ], 204); 
         }
+        if($address->id_user != $id_user)
+        {
+            return response()->json([
+                "message" => "There is no so address for you",
+            ], 204);
+        }
         $address->delete();
 
         return 200;
@@ -49,7 +55,7 @@ class AddressController extends Controller
     
     public function changeAddress(Request $request)
     {
-        
+        $id_user = auth('api')->user()->id;
         $id_address = $request->input('id_address');
         $address = (new AddressModel())->where('id',$id_address)->first();
         
@@ -60,6 +66,12 @@ class AddressController extends Controller
             ], 204); 
         }
 
+        if($address->id_user != $id_user)
+        {
+            return response()->json([
+                "message" => "There is no so address for you",
+            ], 204);
+        }
         $address->title = $request->input('title');
         $address->save();
         return response()->json($address::all(),200);
