@@ -87,11 +87,11 @@ class favoritePostsController extends Controller
 
     public function allFavoritePosts(postFilterRequest $request)
     {
-        $id_user = auth('api')->user()->id;
+        $id_user = 12;//= auth('api')->user()->id;
 
         $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
         
-        
+        $data=$request->validated();
         $query = postModel::query();
         if(isset($data['title']))
         {
