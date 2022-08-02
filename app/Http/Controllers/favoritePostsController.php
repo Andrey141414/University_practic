@@ -78,16 +78,22 @@ class favoritePostsController extends Controller
 
     public function allFavoritePostsID(postFilterRequest $request)
     {
+       
         $id_user = auth('api')->user()->id;
 
-        $data = $request->validated();
+        $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
+        
+        $data=$request->validated();
         $query = postModel::query();
         if(isset($data['title']))
         {
             $query->where('title','ilike',"%{$data['title']}%");
         }
-        $id_posts = $query->get();
-        $id_posts = $id_posts->where('id_user',$id_user)->pluck('id_post');
+        
+        $posts = $query->get();
+        
+        $id_posts = $posts->find($id_posts)->pluck('id');
+
 
         return $id_posts;
     }
