@@ -80,14 +80,21 @@ class favoritePostsController extends Controller
     {
         $id_user = auth('api')->user()->id;
 
-        $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
+        $data = $request->validated();
+        $query = postModel::query();
+        if(isset($data['title']))
+        {
+            $query->where('title','ilike',"%{$data['title']}%");
+        }
+        $id_posts = $query->get();
+        $id_posts = $id_posts->where('id_user',$id_user)->pluck('id_post');
 
         return $id_posts;
     }
 
     public function allFavoritePosts(postFilterRequest $request)
     {
-        $id_user = 12;//= auth('api')->user()->id;
+        $id_user = auth('api')->user()->id;
 
         $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
         

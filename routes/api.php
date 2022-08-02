@@ -91,7 +91,7 @@ Route::controller(App\Http\Controllers\AddressController::class)->group(function
     Route::post('/add_new_address', 'addNewAddress')->middleware('onlyAuthorized');
     Route::delete('/delete_address', 'deleteAddress')->middleware('onlyAuthorized');
     Route::patch('/change_address', 'changeAddress')->middleware('onlyAuthorized');
-    //Route::get('/all_favorite_posts_id', 'allFavoritePostsID')->middleware('onlyAuthorized');
+    Route::get('/all_favorite_posts_id', 'allFavoritePostsID')->middleware('onlyAuthorized');
 });
 
 
