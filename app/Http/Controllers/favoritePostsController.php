@@ -76,7 +76,7 @@ class favoritePostsController extends Controller
 
     }
 
-    public function allFavoritePostsID(Request $request)
+    public function allFavoritePostsID(postFilterRequest $request)
     {
         $id_user = auth('api')->user()->id;
 
