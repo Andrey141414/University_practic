@@ -125,15 +125,24 @@ class favoritePostsController extends Controller
         
         
         $posts = $posts->find($id_posts);
-        $buff = $posts;
+        $buff = $posts->find($id_posts);
         //return $posts;
         $massiv = new postModel();
-        foreach($posts as $key => $id_post)
+
+        $i = 0;
+        foreach($posts as $key => $post)
         {
-           echo($key.' '); 
+            // echo (' key '. $key."\n");
+            // echo ( ' i '. $i ."\n");
+            // echo (' buff'. $buff->where('id',$id_posts[$i])->first()."\n");
+            // echo(' id_post '.$id_posts[$i]."\n");
+
+           $a = $buff->where('id',$id_posts[$i])->first();
+           $posts[$key] = $a;
+           $i++;
         }
-        return 200;
-        return (new postController())->GetPosts($massiv);
+        
+        return (new postController())->GetPosts($posts);
     }
 
 
