@@ -55,6 +55,10 @@ class favoritePostsController extends Controller
     }
 
 
+
+
+
+
     public function deletePostFromFavorite(Request $request)
     {
         $id_user = auth('api')->user()->id;
@@ -75,6 +79,10 @@ class favoritePostsController extends Controller
         return response()->json(["mewssage"=>"post has been deleted from favorites"],200); 
 
     }
+
+
+
+
 
     public function allFavoritePostsID(postFilterRequest $request)
     {
@@ -111,10 +119,19 @@ class favoritePostsController extends Controller
             $query->where('title','ilike',"%{$data['title']}%");
         }
         
-        $posts = $query->get();
+        $posts = $query->orderBy('id')->get();
         
         $posts = $posts->find($id_posts);
 
-        return (new postController())->GetPosts($posts);
+        return [(new postController())->GetPosts($posts),
+        json_encode(["like_count"=>(new favoritePost())->where('id_user',$id_user)->count()])];
+    }
+
+
+
+    public function favoritePostsCount()
+    {
+        $id_user = auth('api')->user()->id;
+        return json_encode(["favorite_posts_count"=>(new favoritePost())->where('id_user',$id_user)->count()]);
     }
 }

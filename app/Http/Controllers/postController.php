@@ -78,6 +78,7 @@ class postController extends Controller
                 "message" => "post is missing"
             ], 404);
         }
+        
         $id_user = auth('api')->user()->id;
         if($post->id_user != $id_user)
         {
@@ -251,6 +252,18 @@ class postController extends Controller
         if(isset($data['title']))
         {
             $query->where('title','ilike',"%{$data['title']}%");
+        }
+
+        if(isset($data['sort_type']))
+        {
+            if($data['sort_type']=='asc')
+            {
+                $query->orderBy('date','asc');
+            }
+            if($data['sort_type']=='desc')
+            {
+                $query->orderBy('date','desc');
+            }
         }
         
         $posts = $query->get();
