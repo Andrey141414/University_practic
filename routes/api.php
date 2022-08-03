@@ -82,7 +82,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
 Route::controller(App\Http\Controllers\favoritePostsController::class)->group(function () {
     Route::post('/add_post_to_favorive', 'addPostToFavorive')->middleware('onlyAuthorized');
     Route::delete('/delete_post_from_favorite', 'deletePostFromFavorite')->middleware('onlyAuthorized');
-    Route::get('/all_favorite_posts', 'allFavoritePosts')->middleware('onlyAuthorized');
+    Route::get('/all_favorite_posts', 'allFavoritePosts');//->middleware('onlyAuthorized');
     Route::get('/all_favorite_posts_id', 'allFavoritePostsID')->middleware('onlyAuthorized');
 });
 

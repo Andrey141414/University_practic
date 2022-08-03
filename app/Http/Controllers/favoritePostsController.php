@@ -109,11 +109,23 @@ class favoritePostsController extends Controller
 
     public function allFavoritePosts(postFilterRequest $request)
     {
-        $id_user = auth('api')->user()->id;
+        $id_user = 12;//auth('api')->user()->id;
 
         $id_posts = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
-        
-        
+        $id_posts1 = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
+        // $massiv = [];
+        // $massiv = $id_posts;
+        // return $massiv;
+
+        $i=0;$j=$id_posts->count()-1;
+         
+        foreach($id_posts as $data)
+        {
+            $id_posts1[$j] = $id_posts[$i];
+            $i++;
+            $j--;
+        }
+
         $data = $request->validated();
         $query = postModel::query();
         if(isset($data['title']))
@@ -124,20 +136,17 @@ class favoritePostsController extends Controller
         $posts = $query->get();
         
         
-        $posts = $posts->find($id_posts);
-        $buff = $posts->find($id_posts);
+        $posts = $posts->find($id_posts1);
+        $buff = $posts->find($id_posts1);
         //return $posts;
         $massiv = new postModel();
 
         $i = 0;
         foreach($posts as $key => $post)
         {
-            // echo (' key '. $key."\n");
-            // echo ( ' i '. $i ."\n");
-            // echo (' buff'. $buff->where('id',$id_posts[$i])->first()."\n");
-            // echo(' id_post '.$id_posts[$i]."\n");
+           
 
-           $a = $buff->where('id',$id_posts[$i])->first();
+           $a = $buff->where('id',$id_posts1[$i])->first();
            $posts[$key] = $a;
            $i++;
         }
