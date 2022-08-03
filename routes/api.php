@@ -61,7 +61,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::patch('/change_post', 'changePost')->middleware('onlyAuthorized');
 
     Route::get('/get_post', 'getPost');
-    Route::get('/my_posts', 'userPostsData');//->middleware('onlyAuthorized');
+    Route::get('/my_posts', 'userPostsData')->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
 
     Route::get('get_phone_number','getPhoneNumber')->middleware('onlyAuthorized');
