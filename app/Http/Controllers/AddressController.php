@@ -32,7 +32,7 @@ class AddressController extends Controller
         $address->id_user=$id_user;
         $address->save();
         $add = $address->where('id_user',$id_user)->where('title',$title)->first();
-        return [response()->json(["message"=>"Address was saved",
+        return [response()->json([
         "id_address"=>$add->id,
     ],200),];
     }

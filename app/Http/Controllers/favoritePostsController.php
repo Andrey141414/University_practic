@@ -125,14 +125,14 @@ class favoritePostsController extends Controller
         
         
         $posts = $posts->find($id_posts);
-        
-        return $posts;
-        $massiv = array();
-        foreach($id_posts as $key => $id_post)
+        $buff = $posts;
+        //return $posts;
+        $massiv = new postModel();
+        foreach($posts as $key => $id_post)
         {
-            array_push($massiv,$posts[23]);
+           echo($key.' '); 
         }
-        //return new postModel( $massiv);
+        return 200;
         return (new postController())->GetPosts($massiv);
     }
 
