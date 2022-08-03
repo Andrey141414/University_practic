@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\postFilterRequest;
+use App\Models\favoritePost;
 
 class postController extends Controller
 {
@@ -198,7 +199,36 @@ class postController extends Controller
             ]); 
     }
 
+
+
+
+
+
+    public function favoritePostsCount()
+    {
+        $id_user = 12;//auth('api')->user()->id;
+        $posts = postModel::where('id_user',$id_user)->get();
+
+        $massiv = array();
+        foreach($posts as $key => $data)
+        {
+            $like_count = favoritePost::where('id_post',$data->id)->count();
+            $mas = array(
+                "like_count"=>$like_count,
+                "id_post"=>$data->id
+            );
+            array_push($massiv,$mas);
+        }
+        return json_encode($massiv);
+        
+    }
    
+
+
+
+
+
+
 ////////////
     public function allPostsData(postFilterRequest $request)
     {

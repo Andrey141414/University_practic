@@ -123,15 +123,10 @@ class favoritePostsController extends Controller
         
         $posts = $posts->find($id_posts);
 
-        return [(new postController())->GetPosts($posts),
-        json_encode(["like_count"=>(new favoritePost())->where('id_user',$id_user)->count()])];
+        return (new postController())->GetPosts($posts);
     }
 
 
 
-    public function favoritePostsCount()
-    {
-        $id_user = auth('api')->user()->id;
-        return json_encode(["favorite_posts_count"=>(new favoritePost())->where('id_user',$id_user)->count()]);
-    }
+   
 }

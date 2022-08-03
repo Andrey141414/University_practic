@@ -23,7 +23,7 @@ class AddressController extends Controller
         $address->title = $request->input('title');
         $address->id_user=$id_user;
         $address->save();
-        return response()->json($address::all(),200);
+        response()->json(["message"=>"Address was saved"],200);
     }
 
     public function deleteAddress(Request $request){
@@ -49,7 +49,7 @@ class AddressController extends Controller
         }
         $address->delete();
 
-        return 200;
+        return response()->json(["message"=>"Address was deleted"],200);
     }
 
     
@@ -74,6 +74,6 @@ class AddressController extends Controller
         }
         $address->title = $request->input('title');
         $address->save();
-        return response()->json($address::all(),200);
+        return response()->json(["message"=>"Address was saved"],200);
     }
 }
