@@ -110,7 +110,7 @@ class favoritePostsController extends Controller
     {
         $id_user = auth('api')->user()->id;
 
-        $id_posts = (new favoritePost())->where('id_user',$id_user)->pluck('id_post');
+        $id_posts = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
         
         $data=$request->validated();
         $query = postModel::query();
@@ -119,7 +119,7 @@ class favoritePostsController extends Controller
             $query->where('title','ilike',"%{$data['title']}%");
         }
         
-        $posts = $query->orderBy('id')->get();
+        $posts = $query->get();
         
         $posts = $posts->find($id_posts);
 
