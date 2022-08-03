@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\postModel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\postFilterRequest;
 class favoritePostsController extends Controller
 
@@ -108,11 +109,12 @@ class favoritePostsController extends Controller
 
     public function allFavoritePosts(postFilterRequest $request)
     {
-        $id_user = auth('api')->user()->id;
+        $id_user = 12;//auth('api')->user()->id;
 
         $id_posts = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
         
-        $data=$request->validated();
+        
+        $data = $request->validated();
         $query = postModel::query();
         if(isset($data['title']))
         {
@@ -121,9 +123,17 @@ class favoritePostsController extends Controller
         
         $posts = $query->get();
         
+        
         $posts = $posts->find($id_posts);
-
-        return (new postController())->GetPosts($posts);
+        
+        return $posts;
+        $massiv = array();
+        foreach($id_posts as $key => $id_post)
+        {
+            array_push($massiv,$posts[23]);
+        }
+        //return new postModel( $massiv);
+        return (new postController())->GetPosts($massiv);
     }
 
 

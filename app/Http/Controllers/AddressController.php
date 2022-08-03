@@ -13,17 +13,28 @@ class AddressController extends Controller
     {
         $id_user = auth('api')->user()->id;
         $address = new AddressModel();
+        $title = $request->input('title');
 
+        if((new AddressModel())->where('title',$title)->where('id_user',$id_user)->first()!=null)
+        {
+            return response()->json([
+                "message" => "You have this address allready",
+            ], 400);
+        }
+        
         if($address->where('id_user',$id_user)->count()>=5)
         {
             return response()->json([
                 "message" => "More 5 addresses",
             ], 507);
         }
-        $address->title = $request->input('title');
+        $address->title = $title;
         $address->id_user=$id_user;
         $address->save();
-        response()->json(["message"=>"Address was saved"],200);
+        $add = $address->where('id_user',$id_user)->where('title',$title)->first();
+        return [response()->json(["message"=>"Address was saved",
+        "id_address"=>$add->id,
+    ],200),];
     }
 
     public function deleteAddress(Request $request){
