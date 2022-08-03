@@ -109,7 +109,7 @@ class favoritePostsController extends Controller
 
     public function allFavoritePosts(postFilterRequest $request)
     {
-        $id_user = 12;//auth('api')->user()->id;
+        $id_user = auth('api')->user()->id;
 
         $id_posts = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
         
