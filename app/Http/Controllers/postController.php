@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\postFilterRequest;
+use App\Models\AddressModel;
 use App\Models\favoritePost;
 
 class postController extends Controller
@@ -24,7 +25,6 @@ class postController extends Controller
             //'description' => 'max:300',
             'id_category' => 'required',
             'image_set' => 'required|between:1,5',
-            'id_city' => 'required',
             'id_address'=>'required'
         ]);
 
@@ -40,7 +40,6 @@ class postController extends Controller
         $post->date = Carbon::now();
         $post->id_category = $request->input('id_category');
         $post-> id_user = $id;
-        $post-> id_city = $request->input('id_city');
         $post-> id_address = $request->input('id_address');
         
         $post->save();
@@ -123,7 +122,6 @@ class postController extends Controller
             //'description' => 'max:300',
             'id_category' => 'required',
             'image_set' => 'required|between:1,5',
-            'id_city' => 'required',
             'id_address'=>'required'
         ]);
 
@@ -183,7 +181,7 @@ class postController extends Controller
         $post->save();
         $user = (new User())->where('id',$post->id_user)->first();
 
-
+        $address = (new AddressModel())->where('id',$post->id_address)->first();
         return response()->json([
             'id'=> $post->id,
             'title'=> $post->title ,
@@ -192,7 +190,7 @@ class postController extends Controller
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
             'image_set'=>$image_set,
-            'id_city'=>$post->id_city,
+            'id_city'=>$address->id_city,
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
@@ -313,10 +311,11 @@ class postController extends Controller
     public function GetPosts(mixed $posts)
     {
         $items_num = 10;
-
+        
         $data = [];
         for($i = 0;$i< $posts->paginate(10)->count();$i++ )
         {
+        $address = (new AddressModel())->where('id',$posts[$i]->id_address)->first();
          $data[$i] = ([
             "id"=>$posts->paginate($items_num)->items()[$i]->id,
             "title"=>$posts->paginate($items_num)->items()[$i]->title,
@@ -326,8 +325,9 @@ class postController extends Controller
             "img_set_path"=>env('APP_HEROKU_URL').'/storage'.'/'.$posts->paginate($items_num)->items()[$i]->img_set_path.'/0.jpeg',
             "view_count"=>$posts->paginate($items_num)->items()[$i]->view_count,
             "id_user"=>$posts->paginate($items_num)->items()[$i]->id_user,
-            "id_city"=>$posts->paginate($items_num)->items()[$i]->id_city,
+            "id_city"=>$address->id_city,//$posts->paginate($items_num)->items()[$i]->id_city,
             "id_category"=>$posts->paginate($items_num)->items()[$i]->id_category,
+
             //"id_category"=>$posts->paginate($items_num)->items()[$i]->id_category
             
        ]);

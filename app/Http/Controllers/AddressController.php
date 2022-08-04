@@ -15,7 +15,7 @@ class AddressController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'id_city' => 'required'
+            //'id_city' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -42,7 +42,7 @@ class AddressController extends Controller
                 "message" => "More 5 addresses",
             ], 507);
         }    
-        $address->id_city = $id_city;
+        //$address->id_city = $id_city;
         $address->title = $title;
         $address->id_user = $id_user;
 
