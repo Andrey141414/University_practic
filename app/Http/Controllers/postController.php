@@ -370,14 +370,23 @@ class postController extends Controller
 
     public function changePostActive(Request $request)
     {
+
+        
         $id_post = $request->get('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
         
+        $id_user = auth('api')->user()->id;
+        if($post->id_user != $id_user)
+        {
+            return response()->json([
+                "message" => "There is no so address for you",
+            ], 204);
+        }
+
         if($post == false)
         {
             return response()->json(["message"=>"There is no so post"],404);    
         }
-
 
         if($post->is_active)
         {

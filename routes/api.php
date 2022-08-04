@@ -102,6 +102,7 @@ Route::controller(App\Http\Controllers\AddressController::class)->group(function
 
 
 Route::get('/ping', [App\Http\Controllers\userController::class,'test'])->name('ping');
+Route::delete('/delete_account', [App\Http\Controllers\userController::class,'deleteAccount'])->middleware('onlyAuthorized');
 
 Route::post('/callback', function(Request $request){
     

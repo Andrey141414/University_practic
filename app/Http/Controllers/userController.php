@@ -36,6 +36,19 @@ class userController extends Controller
     }
 
 
+    public function deleteAccount(Request $request)
+    {
+        $id_user = auth('api')->user()->id;
+
+        $user = User::where('id',$id_user)->first();
+
+        Storage::disk("local")->delete('public/IN_GOOD_HANDS/'.$id_user);
+        Storage::disk("google")->delete('IN_GOOD_HANDS/'.$id_user);
+        $user->delete();
+        return response()->json('account was deleted',200);
+        
+    } 
+
     public function test(Request $request)
     {
 
