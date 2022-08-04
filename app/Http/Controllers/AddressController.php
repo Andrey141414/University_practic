@@ -15,7 +15,7 @@ class AddressController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'id_city' => 'required',
+            'id_city' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -28,28 +28,32 @@ class AddressController extends Controller
         $address = new AddressModel();
         $title = $request->input('title');
         $id_city = $request->input('id_city');
+//return [$title,$id_user];
         if((new AddressModel())->where('title',$title)->where('id_user',$id_user)->first()!=null)
         {
             return response()->json([
                 "message" => "You have this address allready",
             ], 400);
         }
-        
+        //return $title;
         if($address->where('id_user',$id_user)->count()>=5)
         {
             return response()->json([
                 "message" => "More 5 addresses",
             ], 507);
-        
+        }    
         $address->id_city = $id_city;
         $address->title = $title;
-        $address->id_user=$id_user;
+        $address->id_user = $id_user;
+
+        
         $address->save();
+        
         $add = $address->where('id_user',$id_user)->where('title',$title)->first();
         return [response()->json([
         "id_address"=>$add->id,
     ],200),];
-    }
+    
     }
     public function deleteAddress(Request $request){
 
@@ -115,7 +119,7 @@ class AddressController extends Controller
         $address->title = $request->input('title');
         $address->id_city = $id_city;
         $address->id_user=$id_user;
-        
+
         $address->save();
         return response()->json(["message"=>"Address was saved"],200);
     }
