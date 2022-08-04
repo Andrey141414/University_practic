@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AddressModel;
+use App\Models\postModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Nette\Utils\Json;
@@ -122,5 +123,18 @@ class AddressController extends Controller
 
         $address->save();
         return response()->json(["message"=>"Address was saved"],200);
+    }
+
+    //
+    public function isPostsForAddress(Request $request)
+    {
+        $id_address = $request->input('id_address');
+        if(postModel::where('id_address',$id_address)->first() == null)
+        {
+            return response()->json(["answer"=>false],200);
+        }
+        else{
+            return response()->json(["answer"=>true],200);
+        }
     }
 }
