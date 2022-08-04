@@ -242,7 +242,9 @@ class postController extends Controller
         }
         if(isset($data['id_city']))
         {
-            $query->where('id_city',$data['id_city']);
+            $id_addresses = (new AddressModel())->where('id_city',$data['id_city'])->pluck('id');   
+            $query->find('id_city',$id_addresses);
+            //
         }
 
         if(isset($data['title']))
@@ -315,7 +317,7 @@ class postController extends Controller
         $data = [];
         for($i = 0;$i< $posts->paginate(10)->count();$i++ )
         {
-        $address = (new AddressModel())->where('id',$posts[$i]->id_address)->first();
+        $address = (new AddressModel())->where('id',$posts->paginate($items_num)->items()[$i]->id_address)->first();
          $data[$i] = ([
             "id"=>$posts->paginate($items_num)->items()[$i]->id,
             "title"=>$posts->paginate($items_num)->items()[$i]->title,
