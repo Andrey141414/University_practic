@@ -54,6 +54,15 @@ class userController extends Controller
     public function test(Request $request)
     {
 
+        $items_num = 10;
+        $posts = (new postModel())::all();
+        //return $posts;
+        $address = [];
+        for($i = 0;$i<10;$i++ )
+        {
+        $address[$i] = AddressModel::where('id',$posts->paginate($items_num)->items()[$i]->id_address)->first();
+        }
+        return $address;
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];
         // // $arr = [];
         // // $arr[0] = 1;

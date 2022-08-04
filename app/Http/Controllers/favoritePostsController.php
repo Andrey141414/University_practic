@@ -109,7 +109,7 @@ class favoritePostsController extends Controller
 
     public function allFavoritePosts(postFilterRequest $request)
     {
-        $id_user = auth('api')->user()->id;
+        $id_user = 12;//auth('api')->user()->id;
 
         $id_posts = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
         $id_posts1 = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
@@ -126,6 +126,8 @@ class favoritePostsController extends Controller
             $j--;
         }
 
+
+
         $data = $request->validated();
         $query = postModel::query();
         if(isset($data['title']))
@@ -134,23 +136,36 @@ class favoritePostsController extends Controller
         }
         
         $posts = $query->get();
-        
-        
-        $posts = $posts->find($id_posts1);
-        $buff = $posts->find($id_posts1);
-        //return $posts;
-        $massiv = new postModel();
+        $id_post_short = $posts->pluck('id');
+        //return [$id_post_short,$id_posts1];
 
+        $id_post_result = [];;
+        for($i = 0,$k = 0;$i<$id_posts1->count();$i++)
+        {
+            for($j = 0;$j<$id_post_short->count();$j++)
+            {
+                if($id_post_short[$j]==$id_posts1[$i])
+                {
+                    $id_post_result[$k] = $id_posts1[$i];
+                    $k++;
+                    break;
+                }
+            }    
+        }
+        //return [$id_post_result,$id_posts1];
+
+        $posts = $posts->find($id_post_result);
+        $buff = $posts->find($id_post_result);
+        //return $buff;
+        
         $i = 0;
         foreach($posts as $key => $post)
         {
-           
-
-           $a = $buff->where('id',$id_posts1[$i])->first();
+           $a = $buff->where('id',$id_post_result[$i])->first();
            $posts[$key] = $a;
            $i++;
         }
-        
+        //return $posts;
         return (new postController())->GetPosts($posts);
     }
 

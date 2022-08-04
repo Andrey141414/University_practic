@@ -160,8 +160,7 @@ class postController extends Controller
 
     }
     
-
-
+    
     public function getPost(Request $request)
     {
         //$id = //auth('api')->user()->id;
@@ -195,8 +194,7 @@ class postController extends Controller
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
-            'id_address'=>$post->id_address,
-            'titile_address'=>$address->title, 
+            'title_address'=>$address->title, 
             ]); 
     }
 
@@ -444,6 +442,60 @@ class postController extends Controller
     {
         Storage::disk("local")->deleteDirectory('/public/IN_GOOD_HANDS');
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getPostForChange(Request $request)
+    {
+        
+        $id_post = $request->get('id_post');
+        $post = (new postModel())->where('id',$id_post)->first();
+        $image_set = [];
+
+        $view_count = ($post->view_count);
+        $post->view_count = ++$view_count;
+
+        $path = 'public/IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
+        $images_path = Storage::disk("local")->files($path);
+        foreach ($images_path as $key => $file) {
+            $image_set[$key] = env('APP_HEROKU_URL').(Storage::url($file));
+        }
+        $post->save();
+        $user = (new User())->where('id',$post->id_user)->first();
+
+        $address = (new AddressModel())->where('id',$post->id_address)->first();
+        return response()->json([
+            'id'=> $post->id,
+            'title'=> $post->title ,
+            'description' => $post->description,
+            'date'=> date('d-m-Y', strtotime($post->date)),
+            'id_category'=> $post->id_category,
+            'id_user'=> $post->id_user,
+            'image_set'=>$image_set,
+            "is_active"=>$post->is_active,
+            'id_city'=>$address->id_city,
+            'view_count'=>$post->view_count-1,
+            'user_name'=>$user->name,
+            'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
+            'title_address'=>$address->title, 
+            ]); 
+
     }
 
 

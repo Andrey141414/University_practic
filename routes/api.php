@@ -61,6 +61,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::patch('/change_post', 'changePost')->middleware('onlyAuthorized');
 
     Route::get('/get_post', 'getPost');
+    Route::get('/get_post_for_change','getPostForChange')->middleware('onlyAuthorized');
     Route::get('/get_post_likes', 'favoritePostsCount')->middleware('onlyAuthorized');
     Route::get('/my_posts', 'userPostsData')->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
@@ -83,7 +84,7 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
 Route::controller(App\Http\Controllers\favoritePostsController::class)->group(function () {
     Route::post('/add_post_to_favorive', 'addPostToFavorive')->middleware('onlyAuthorized');
     Route::delete('/delete_post_from_favorite', 'deletePostFromFavorite')->middleware('onlyAuthorized');
-    Route::get('/all_favorite_posts', 'allFavoritePosts')->middleware('onlyAuthorized');
+    Route::get('/all_favorite_posts', 'allFavoritePosts');//->middleware('onlyAuthorized');
     Route::get('/all_favorite_posts_id', 'allFavoritePostsID')->middleware('onlyAuthorized');
 });
 
