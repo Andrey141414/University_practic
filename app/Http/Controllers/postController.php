@@ -243,7 +243,7 @@ class postController extends Controller
         if(isset($data['id_city']))
         {
             $id_addresses = (new AddressModel())->where('id_city',$data['id_city'])->pluck('id');   
-            $query->find('id_city',$id_addresses);
+            $query->whereIn('id_address',$id_addresses);
             //
         }
 
