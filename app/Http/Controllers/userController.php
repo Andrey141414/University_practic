@@ -39,7 +39,6 @@ class userController extends Controller
     public function test(Request $request)
     {
 
-        
         return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];
         // // $arr = [];
         // // $arr[0] = 1;

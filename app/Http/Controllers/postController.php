@@ -358,6 +358,14 @@ class postController extends Controller
         return $phone_number;
     }
 
+    public function getAddress(Request $request)
+    {
+        $id_post = $request->get('id_post');
+        $id_address = (new postModel())->where('id',$id_post)->first()->id_address;
+        $address = (new AddressModel())->where('id',$id_address)->first()->title;
+        return $address;
+    }
+
 
 
     public function changePostActive(Request $request)
