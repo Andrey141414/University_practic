@@ -195,7 +195,8 @@ class postController extends Controller
             'id_city'=>$post->id_city,
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
-            'user_created_at'=>date('d-m-Y', strtotime($user->created_at)) 
+            'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
+            'id_address'=>$post->id_address, 
             ]); 
     }
 
@@ -206,7 +207,7 @@ class postController extends Controller
 
     public function favoritePostsCount()
     {
-        $id_user = 12;//auth('api')->user()->id;
+        $id_user = auth('api')->user()->id;
         $posts = postModel::where('id_user',$id_user)->get();
 
         $massiv = array();
