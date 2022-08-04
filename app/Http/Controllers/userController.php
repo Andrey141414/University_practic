@@ -45,6 +45,8 @@ class userController extends Controller
         Storage::disk("local")->delete('public/IN_GOOD_HANDS/'.$id_user);
         Storage::disk("google")->delete('IN_GOOD_HANDS/'.$id_user);
         $user->delete();
+
+        AddressModel::where('id_user',$id_user)->delete();
         return response()->json('account was deleted',200);
         
     } 
