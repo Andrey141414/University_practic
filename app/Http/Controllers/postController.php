@@ -195,7 +195,8 @@ class postController extends Controller
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
-            'id_address'=>$post->id_address, 
+            'id_address'=>$post->id_address,
+            'titile_address'=>$address->title, 
             ]); 
     }
 
