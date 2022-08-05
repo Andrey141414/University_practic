@@ -465,6 +465,11 @@ class postController extends Controller
     public function getPostForChange(Request $request)
     {
         
+       
+        $id_post = $request->get('id_post');
+        $post = (new postModel())->where('id',$id_post)->first();
+        $image_set = [];
+
         $id_user = auth('api')->user()->id;
         if($post->id_user != $id_user)
         {
@@ -472,10 +477,6 @@ class postController extends Controller
                 "message" => "There is no so address for you",
             ], 204);
         }
-
-        $id_post = $request->get('id_post');
-        $post = (new postModel())->where('id',$id_post)->first();
-        $image_set = [];
 
         //$view_count = ($post->view_count);
         //$post->view_count = ++$view_count;
