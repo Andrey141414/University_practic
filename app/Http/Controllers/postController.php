@@ -270,6 +270,7 @@ class postController extends Controller
 
         $posts = $posts->where('is_active');
         $posts = $posts->orderBy('id');
+        
         return $this->GetPosts($posts);
     
     }
