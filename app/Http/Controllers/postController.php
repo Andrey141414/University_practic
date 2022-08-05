@@ -234,7 +234,7 @@ class postController extends Controller
 
         $data=$request->validated();
 
-        $query = postModel::query()->orderBy('id','desc');
+        $query = postModel::query();
 
         if(isset($data['id_category']))
         {
@@ -266,7 +266,7 @@ class postController extends Controller
             }
         }
 
-        $posts = $query->get();
+        $posts = $query->orderBy('id','desc')->get();
 
         $posts = $posts->where('is_active');
         //$posts = $posts->orderBy('id');
