@@ -489,12 +489,12 @@ class postController extends Controller
             'id_category'=> $post->id_category,
             'id_user'=> $post->id_user,
             'image_set'=>$image_set,
-            "is_active"=>$post->is_active,
-            'id_city'=>$address->id_city,
+            'is_active'=>$post->is_active,
+            //'id_city'=>$address->id_city,
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
-            //'id_address'=>$address->id, 
+            'id_address'=>$address->id, 
             ]); 
 
     }
