@@ -234,7 +234,7 @@ class postController extends Controller
 
         $data=$request->validated();
 
-        $query = postModel::query();
+        $query = postModel::orderBy('id')->query();
 
         if(isset($data['id_category']))
         {
