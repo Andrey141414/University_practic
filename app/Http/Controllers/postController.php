@@ -64,7 +64,7 @@ class postController extends Controller
         
         $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
         $post->save();
-        return response()->json(["message"=>"Data was saved"],200);
+        return response()->json(["message"=>"Data was saved","id_post"=>$id_post],200);
     }
 
     public function deletePost(Request $request)
