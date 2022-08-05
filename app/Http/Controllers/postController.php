@@ -465,12 +465,21 @@ class postController extends Controller
     public function getPostForChange(Request $request)
     {
         
+        $id_user = auth('api')->user()->id;
+        if($post->id_user != $id_user)
+        {
+            return response()->json([
+                "message" => "There is no so address for you",
+            ], 204);
+        }
+
         $id_post = $request->get('id_post');
         $post = (new postModel())->where('id',$id_post)->first();
         $image_set = [];
 
         //$view_count = ($post->view_count);
         //$post->view_count = ++$view_count;
+        
 
         $path = 'public/IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
         $images_path = Storage::disk("local")->files($path);
