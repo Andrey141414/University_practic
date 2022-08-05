@@ -266,7 +266,7 @@ class postController extends Controller
             }
         }
 
-        $posts = $query->orderBy('id','desc')->get();
+        $posts = $query->get();
 
         $posts = $posts->where('is_active');
         //$posts = $posts->orderBy('id');
@@ -298,7 +298,7 @@ class postController extends Controller
             }
         }
         
-        $posts = $query->get();
+        $posts = $query->orderBy('id','desc')->get();
         $posts = $posts->where('id_user',$id);
         
         
