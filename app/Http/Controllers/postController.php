@@ -194,7 +194,7 @@ class postController extends Controller
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
-            'title_address'=>$address->title, 
+            //'title_address'=>$address->title, 
             ]); 
     }
 
@@ -468,8 +468,8 @@ class postController extends Controller
         $post = (new postModel())->where('id',$id_post)->first();
         $image_set = [];
 
-        $view_count = ($post->view_count);
-        $post->view_count = ++$view_count;
+        //$view_count = ($post->view_count);
+        //$post->view_count = ++$view_count;
 
         $path = 'public/IN_GOOD_HANDS/'.$post->id_user.'/'.$id_post;
         $images_path = Storage::disk("local")->files($path);
@@ -493,7 +493,7 @@ class postController extends Controller
             'view_count'=>$post->view_count-1,
             'user_name'=>$user->name,
             'user_created_at'=>date('d-m-Y', strtotime($user->created_at)),
-            'title_address'=>$address->title, 
+            //'id_address'=>$address->id, 
             ]); 
 
     }
