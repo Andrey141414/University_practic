@@ -1,0 +1,473 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Swagger документация проекта <<В добрые руки>>",
+        "description": "Open API",
+        "contact": {
+            "email": "admin@admin.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://in-good-hands.dev.mind4.me",
+            "description": " API Server"
+        }
+    ],
+    "paths": {
+        "/": {},
+        "/api/auth/registr": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация",
+                "operationId": "13b0562a9727fa3252ae787aeb7de592",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "phone_number",
+                                    "id_city"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Андрей"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "!User123456"
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "+7(123)4567890"
+                                    },
+                                    "id_city": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Авторизация",
+                "operationId": "f779238bce5c5b984c773808f46fd14c",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@mail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "!User123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/auth/user-profile": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получить данные пользователя",
+                "operationId": "8d2f0ed03f996f6b78253e4ad69efcbd",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Обновление refresh токена",
+                "operationId": "29a727b701c5fac57f1f288c72ffd72b",
+                "parameters": [
+                    {
+                        "name": "refresh_token",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/sent_code": {
+            "get": {
+                "tags": [
+                    "Mail"
+                ],
+                "summary": "Отправляет код на почту",
+                "operationId": "9d35ede9ca2d8573bf210fd1e7ae2457",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized user"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/check_code": {
+            "post": {
+                "tags": [
+                    "Mail"
+                ],
+                "summary": "Проверка кода, который пришел на почту",
+                "operationId": "9781d8a43fb5d8d0d45ad174c3a3de1e",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email_code"
+                                ],
+                                "properties": {
+                                    "email_code": {
+                                        "type": "integer",
+                                        "example": "1234"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "402": {
+                        "description": "Incorrect code"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/create_post": {
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Get list of blog posts",
+                "operationId": "cd8190370e17959ca0676e6323b1c6a0",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "id_category",
+                                    "image_set",
+                                    "address",
+                                    "id_city"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Пальто"
+                                    },
+                                    "id_category": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "image_set": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": [
+                                                "The email field is required.",
+                                                "The email must be a valid email address."
+                                            ]
+                                        }
+                                    },
+                                    "address": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    },
+                                    "id_city": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized user"
+                    }
+                }
+            }
+        },
+        "/api/create_review": {
+            "post": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Создание Отзыва",
+                "operationId": "92ca9a4678598e9f620af70b52eb7d95",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_user_owner",
+                                    "score",
+                                    "text"
+                                ],
+                                "properties": {
+                                    "id_user_owner": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "score": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "text": {
+                                        "type": "string",
+                                        "example": "Новый отзыв"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_user_reviews": {
+            "get": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Посмотреть отзывы пользователя",
+                "operationId": "601331b86cc70ef33604c04b56ba699b",
+                "parameters": [
+                    {
+                        "name": "id_user_owner",
+                        "in": "query",
+                        "required": true,
+                        "example": 9
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_my_reviews": {
+            "get": {
+                "tags": [
+                    "Review"
+                ],
+                "summary": "Посмотреть отзывы на себя",
+                "operationId": "6c2371fc8b95268ff49c93a74e058dff",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/city/all_cities": {
+            "get": {
+                "tags": [
+                    "Dictionaries"
+                ],
+                "summary": "Получение списка городов",
+                "operationId": "6fa98e3d016a6d3602573920b3a4b819",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/category/all_categories": {
+            "get": {
+                "tags": [
+                    "Dictionaries"
+                ],
+                "summary": "Получение списка категорий",
+                "operationId": "fc6c8ac20a1f1c46c2af13244042b300",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AddressModel": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "role": {
+                        "description": "User role",
+                        "type": "string",
+                        "readOnly": "true"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearer_token": {
+                "type": "http",
+                "scheme": "bearer"
+            },
+            "passport": {
+                "type": "oauth2",
+                "description": "Laravel passport oauth2 security.",
+                "in": "header",
+                "scheme": "https",
+                "flows": {
+                    "password": {
+                        "authorizationUrl": "https://in-good-hands.dev.mind4.me/oauth/authorize",
+                        "tokenUrl": "https://in-good-hands.dev.mind4.me/oauth/token",
+                        "refreshUrl": "https://in-good-hands.dev.mind4.me/token/refresh",
+                        "scopes": []
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Projects",
+            "description": " Api Endpoints"
+        }
+    ]
+}

@@ -9,12 +9,40 @@ use Illuminate\Support\Facades\Validator;
 
 class tapeController extends Controller
 {
-    public function setAllCitys()
+/** 
+    * @OA\Get(
+    *     path="/api/city/all_cities",
+    *     summary="Получение списка городов",
+    *     tags={"Dictionaries"},
+    *     @OA\Response(
+    *         response=200,
+    *         description="successful operation",
+    *         @OA\Schema(
+    *             type="string",         
+    *         ),
+    *     ),
+    * )
+*/
+    public function getAllCitys()
     {
-        $model = new CityModel();
-        return response()->json($model::all(),200);
+        return response()->json(CityModel::all(),200);
     }
-    public function getCategory()
+
+/** 
+    * @OA\Get(
+    *     path="/api/category/all_categories",
+    *     summary="Получение списка категорий",
+    *     tags={"Dictionaries"},
+    *     @OA\Response(
+    *         response=200,
+    *         description="successful operation",
+    *         @OA\Schema(
+    *             type="string",         
+    *         ),
+    *     ),
+    * )
+*/
+    public function getAllCategory()
     {
         return response()->json(CategoryModel::all(),200);
     }
@@ -24,7 +52,7 @@ class tapeController extends Controller
 
         $validator = Validator::make($request->all(), [
             'icon' => 'required',
-            'category_name' => 'required|unique:category|max:50',
+            'name' => 'required|unique:category|max:50',
         ]);
 
         if ($validator->fails()) {
@@ -36,7 +64,7 @@ class tapeController extends Controller
         $icon = $request->input('icon');
         $db = new CategoryModel();
         $db->icon = $request->input('icon');
-        $db->category_name = $request->input('category_name');
+        $db->name = $request->input('name');
         $db->is_active = true;
         $db->sorting = 0;
         

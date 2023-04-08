@@ -9,9 +9,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\postFilterRequest;
-class favoritePostsController extends Controller
+use App\Service\UserService;
+use App\Service\PostService;
 
+
+class favoritePostsController extends Controller
 {
+    protected $pagination = 10;
     //
     public function addPostToFavorive(Request $request)
     {
@@ -113,11 +117,9 @@ class favoritePostsController extends Controller
 
         $id_posts = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
         $id_posts1 = (new favoritePost())->orderBy('id')->where('id_user',$id_user)->pluck('id_post');
-        // $massiv = [];
-        // $massiv = $id_posts;
-        // return $massiv;
 
-        $i=0;$j=$id_posts->count()-1;
+        $i=0;
+        $j=$id_posts->count()-1;
          
         foreach($id_posts as $data)
         {
@@ -132,13 +134,12 @@ class favoritePostsController extends Controller
         $query = postModel::query();
         if(isset($data['title']))
         {
-            $query->where('title','ilike',"%{$data['title']}%");
+            $query->where('title','like',"%{$data['title']}%");
         }
         
         $posts = $query->get();
         $id_post_short = $posts->pluck('id');
-        //return [$id_post_short,$id_posts1];
-
+        
         $id_post_result = [];;
         for($i = 0,$k = 0;$i<$id_posts1->count();$i++)
         {
@@ -152,21 +153,17 @@ class favoritePostsController extends Controller
                 }
             }    
         }
-        //return [$id_post_result,$id_posts1];
-
+        
         $posts = $posts->find($id_post_result);
         $buff = $posts->find($id_post_result);
-        //return $buff;
         
         $i = 0;
         foreach($posts as $key => $post)
         {
-           $a = $buff->where('id',$id_post_result[$i])->first();
-           $posts[$key] = $a;
+           $posts[$key] = $buff->where('id',$id_post_result[$i])->first();
            $i++;
         }
-        //return $posts;
-        return (new postController())->GetPosts($posts);
+        return PostService::getPostsWithPagination($posts,$this->pagination);
     }
 
 

@@ -10,5 +10,14 @@ class CityModel extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = "city";
+    
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public static function getCityModel($id_city)
+    {
+        return  self::find($id_city);
+    }
 }
 

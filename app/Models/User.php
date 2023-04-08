@@ -48,5 +48,11 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
+        'blocked_admin' => 'boolean',
     ];
+    public function getUser($id)
+    {
+        return User::where('id',$id)->first();
+    }
 }

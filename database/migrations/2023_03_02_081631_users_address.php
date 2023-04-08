@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('address_models', function (Blueprint $table) {
+        //
+        Schema::create('users_address', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->bigInteger('id_user')->default(20); 
+            $table->bigInteger('id_address')->default(20); 
         });
     }
 
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('address_models');
+        //
     }
 };

@@ -2,11 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
-use App\Http\Controllers\ImageController;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,23 +13,14 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-// header("Access-Control-Allow-Origin: *");
-// header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS");
-// header("Access-Control-Allow-Headers: *");
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,boundary,Content-Length');
 header("Set-Cookie: cross-site-cookie=whatever; SameSite=None; Secure");
-//header('Access-Control-Allow-Origin: *');
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-//Route::post('/address',[App\Http\Controllers\AddressController::class,'foo']);
 
 //Роуты авторизации
 Route::controller(App\Http\Controllers\Auth\LoginController::class)->group(function () {
     Route::post('/auth/login', 'login');
+    Route::get('/auth/login', 'login')->name('api/auth/login');
     Route::post('/auth/refresh','refresh');
     Route::post('/auth/registr', 'registr');
     Route::get('/auth/user-profile','profile')->middleware('onlyAuthorized');
@@ -48,14 +34,18 @@ Route::controller(App\Http\Controllers\mailController::class)->group(function ()
 
 //Лента
 Route::controller(App\Http\Controllers\tapeController::class)->group(function () {
-    Route::get('category/get_category', 'getCategory');
-    Route::get('city/all_cities', 'setAllCitys');
+    Route::get('category/all_categories', 'getAllCategory');
+    Route::get('city/all_cities', 'getAllCitys');
     Route::post('add_category_to_db', 'addCategoryToDb')->middleware('onlyAuthorized');
     //
 });
 
 //фотографии и посты 
+
 Route::controller(App\Http\Controllers\postController::class)->group(function () {
+    
+    Route::get('/similar_posts', 'similarPosts');
+    Route::post('/create_post1', 'createPost');
     Route::post('/create_post', 'createPost')->middleware('onlyAuthorized');
     Route::delete('/delete_post', 'deletePost')->middleware('onlyAuthorized');
     Route::patch('/change_post', 'changePost')->middleware('onlyAuthorized');
@@ -66,8 +56,12 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::get('/my_posts', 'userPostsData')->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
 
+    Route::get('/user_posts', 'getUserPosts');
+
     Route::get('get_phone_number','getPhoneNumber')->middleware('onlyAuthorized');
     Route::get('get_address','getAddress')->middleware('onlyAuthorized');
+    Route::get('get_contact','getContact')->middleware('onlyAuthorized');
+    
     //
     Route::patch('change_post_active','changePostActive')->middleware('onlyAuthorized');
 
@@ -102,19 +96,22 @@ Route::controller(App\Http\Controllers\AddressController::class)->group(function
 
 
 
-Route::get('/ping', [App\Http\Controllers\userController::class,'test'])->name('ping');
+Route::post('/ping', [App\Http\Controllers\userController::class,'test'])->name('ping');
 Route::delete('/delete_account', [App\Http\Controllers\userController::class,'deleteAccount'])->middleware('onlyAuthorized');
-
-Route::post('/callback', function(Request $request){
-    
-    
-    
-    return response()->json($request);
-});
-
 
 Route::controller(App\Http\Controllers\passwordController::class)->group(function () {
     Route::post('/send_password_reset_token', 'sendPasswordResetToken');
     Route::post('/is_valid_token', 'isshowPasswordResetForm')->name('showPasswordResetForm');
     Route::post('/password_reset', 'resetPassword');
+});
+
+
+Route::controller(App\Http\Controllers\reviewController::class)->group(function () {
+    Route::post('/create_review', 'createReviews');
+    Route::get('/get_user_reviews', 'getReviews');
+    Route::get('/get_my_reviews', 'getMyReviews');
+});
+
+Route::post('/callback', function(Request $request){
+    return response()->json($request);
 });
