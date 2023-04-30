@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <p>To recover your password follow the link</p>
+    <p>Чтобы поменять пароль пройдите по ссылке</p>
 <a href="<?php echo ('https://in-good-hands-ae0f6.web.app/reset-password'.'?token='. $token)?>"><?php echo 'password-reset?token='. $token ?></a>
 
 </body>

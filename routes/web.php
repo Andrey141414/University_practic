@@ -29,6 +29,11 @@ Route::get('/test', function () {
     return response()->json('All right',200);
 });
 
+Route::get('/blog', function () {
+    return view('Mail/reservationCompleted',['name'=>'123']);
+});
+
+
 
 Route::get('/email/verify', function () {
     return view('\auth\verify-email');

@@ -2,14 +2,22 @@
 
 namespace App\Console\Commands;
 
+use App\Service\ReservationService;
+
+use App\Service\LoyalitySystem;
+use App\Service\BidService;
 use App\Service\PostService;
 use Illuminate\Console\Command;
 use App\Models\postModel;
 use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-
-use function Amp\Iterator\filter;
+use App\Models\CityModel;
+use Illuminate\Support\Facades\Validator;
+use App\Models\savedContacts;
+use App\Models\User;
+use Laravel\Passport\Passport;
+use App\Http\Controllers\userController;
 
 class TestCommand extends Command
 {
@@ -27,57 +35,76 @@ class TestCommand extends Command
    */
   protected $description = 'Command description';
 
+  protected $validator;
   /**
    * Execute the console command.
    *
    * @return int
    */
-  
-   protected $LocalPhotoPath = '/PHOTOS';
+
+  protected $LocalPhotoPath = '/PHOTOS';
 
   public function handle()
   {
 
 
-    $posts = postModel::query()->get();
-    // print_r($posts[0]);
-    // return;
-    $posts = json_decode($posts,true);
+    $loyality = new LoyalitySystem(User::find(16));
+    
+    $loyality->addGoals(3);
 
-$post  = $posts[1];
-
-$post = (object) $post;
-    //$post  = json_decode($post,true);
-    // print_r($post);
-
-    //$post = collect($post);
-
-    print_r( $post);
+    return ;
+    $result = ReservationService::changeStatus(8,'completed');
+    echo($result);
     return;
-    $res = PostService::sortPostsByDistance(postModel::all(), 53.35777624982061, 83.73300723555694);
-
-    print_r($res);
-    die();
-    //53.35190621390563, 83.76646001814443
-
-    print_r($this->getDistanceBetweenPointsNew(
-      83.76646001814443,
-      53.35190621390563,
-      83.79300983896833,
-      53.3538540472901
-    ));
+    // Пример использования функции
+    $arr = array(5, 2, 9, 1, 5, 6);
+    echo "Исходный массив: ";
+    print_r($arr);
+    echo "Отсортированный массив: ";
+    print_r($this->shellSort($arr));
     return;
 
-    $path = $this->LocalPhotoPath . '/' . 8 . '/' . 66;
-    $images_path = Storage::disk("local")->files($path);
-
-    print_r($images_path);
-    die();
-    $json = '{"\latitude":"53.326089","title":"\u0433 \u0411\u0430\u0440\u043d\u0430\u0443\u043b, \u0443\u043b \u0410\u043d\u0430\u0442\u043e\u043b\u0438\u044f, \u0434 224","longitude":"83.759681"}';
-    $json = '"{\"Code\":\"test\",\"Amount\":\"2200\",\"CurrencyCode\":\"RUB\"}"';
-    $json = json_decode($json, true)['Code'];
-    echo (($json));
-    return Command::SUCCESS;
+    if (savedContacts::isContactsSaved(16, 256)) {
+      printf('Yes');
+    } else {
+      printf('Error');
+    }
   }
 
+  public function test($contacts = null)
+  {
+    if (isset($contacts)) {
+      printf('Yes');
+    } else {
+      printf('Error');
+    }
+  }
+  function shellSort($arr)
+  {
+    $n = count($arr);
+
+    // Выбор шага
+    $gap = floor($n / 2);
+
+    // Повторение сортировки
+    while ($gap > 0) {
+      // Проход по массиву с шагом gap
+      for ($i = $gap; $i < $n; $i++) {
+        // Сохранение текущего элемента и его индекса
+        $temp = $arr[$i];
+        $j = $i;
+        // Сдвиг элементов на шаг gap
+        while ($j >= $gap && $arr[$j - $gap] > $temp) {
+          $arr[$j] = $arr[$j - $gap];
+          $j -= $gap;
+        }
+        // Вставка сохраненного элемента на правильное место
+        $arr[$j] = $temp;
+      }
+      // Уменьшение шага на половину
+      $gap = floor($gap / 2);
+    }
+    // Возврат отсортированного массива
+    return $arr;
+  }
 }

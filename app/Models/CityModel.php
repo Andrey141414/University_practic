@@ -15,6 +15,11 @@ class CityModel extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $fillable = [
+        'name',
+        'is_active',
+    ];
+    protected $guarded = [];
     public static function getCityModel($id_city)
     {
         return  self::find($id_city);

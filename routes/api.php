@@ -21,9 +21,9 @@ header("Set-Cookie: cross-site-cookie=whatever; SameSite=None; Secure");
 Route::controller(App\Http\Controllers\Auth\LoginController::class)->group(function () {
     Route::post('/auth/login', 'login');
     Route::get('/auth/login', 'login')->name('api/auth/login');
-    Route::post('/auth/refresh','refresh');
+    Route::post('/auth/refresh', 'refresh');
     Route::post('/auth/registr', 'registr');
-    Route::get('/auth/user-profile','profile')->middleware('onlyAuthorized');
+    Route::get('/auth/user-profile', 'profile')->middleware('onlyAuthorized');
 });
 
 //почта
@@ -36,14 +36,12 @@ Route::controller(App\Http\Controllers\mailController::class)->group(function ()
 Route::controller(App\Http\Controllers\tapeController::class)->group(function () {
     Route::get('category/all_categories', 'getAllCategory');
     Route::get('city/all_cities', 'getAllCitys');
-    Route::post('add_category_to_db', 'addCategoryToDb')->middleware('onlyAuthorized');
-    //
 });
 
 //фотографии и посты 
 
 Route::controller(App\Http\Controllers\postController::class)->group(function () {
-    
+
     Route::get('/similar_posts', 'similarPosts');
     Route::post('/create_post1', 'createPost');
     Route::post('/create_post', 'createPost')->middleware('onlyAuthorized');
@@ -51,24 +49,18 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::patch('/change_post', 'changePost')->middleware('onlyAuthorized');
 
     Route::get('/get_post', 'getPost');
-    Route::get('/get_post_for_change','getPostForChange')->middleware('onlyAuthorized');
+    Route::get('/get_post_for_change', 'getPostForChange')->middleware('onlyAuthorized');
     Route::get('/get_post_likes', 'favoritePostsCount')->middleware('onlyAuthorized');
     Route::get('/my_posts', 'userPostsData')->middleware('onlyAuthorized');
     Route::get('/all_posts', 'allPostsData');
 
     Route::get('/user_posts', 'getUserPosts');
 
-    Route::get('get_phone_number','getPhoneNumber')->middleware('onlyAuthorized');
-    Route::get('get_address','getAddress')->middleware('onlyAuthorized');
-    Route::get('get_contact','getContact')->middleware('onlyAuthorized');
-    
-    //
-    Route::patch('change_post_active','changePostActive')->middleware('onlyAuthorized');
+    Route::get('get_phone_number', 'getPhoneNumber')->middleware('onlyAuthorized');
+    Route::get('get_contact', 'getContact')->middleware('onlyAuthorized');
 
-    Route::get('load_preview_to_heroku','loadPreviewToHeroku');
+    Route::patch('change_post_active', 'changePostActive')->middleware('onlyAuthorized');
 
-    //тест
-    Route::get('delete_all_posts_from_heroku','loadPreviewToHerokuTest');
 });
 
 
@@ -93,11 +85,18 @@ Route::controller(App\Http\Controllers\AddressController::class)->group(function
 
 
 
+Route::controller(App\Http\Controllers\userController::class)->group(function () {
+    // Route::post('/add_new_address', 'addNewAddress')->middleware('onlyAuthorized');
+    // Route::delete('/delete_address', 'deleteAddress')->middleware('onlyAuthorized');
+    Route::patch('/change_user_info', 'changeUserInfo')->middleware('onlyAuthorized');
+    //Route::get('/is_posts_for_address', 'isPostsForAddress')->middleware('onlyAuthorized');
+});
 
 
 
-Route::post('/ping', [App\Http\Controllers\userController::class,'test'])->name('ping');
-Route::delete('/delete_account', [App\Http\Controllers\userController::class,'deleteAccount'])->middleware('onlyAuthorized');
+
+Route::post('/ping', [App\Http\Controllers\userController::class, 'test'])->name('ping');
+Route::delete('/delete_account', [App\Http\Controllers\userController::class, 'deleteAccount'])->middleware('onlyAuthorized');
 
 Route::controller(App\Http\Controllers\passwordController::class)->group(function () {
     Route::post('/send_password_reset_token', 'sendPasswordResetToken');
@@ -112,6 +111,57 @@ Route::controller(App\Http\Controllers\reviewController::class)->group(function 
     Route::get('/get_my_reviews', 'getMyReviews');
 });
 
-Route::post('/callback', function(Request $request){
+Route::controller(App\Http\Controllers\reservationController::class)->group(function () {
+
+
+  
+    Route::post('/create_reservation', 'createReservation')->middleware('onlyAuthorized');
+    Route::delete('/delete_reservation', 'deleteReservation')->middleware('onlyAuthorized');
+    //исходящие
+    Route::get('/get_reservations', 'getReservations');
+    Route::patch('/change_reservation_status', 'changeStatus')->middleware('onlyAuthorized');
+    // Route::get('/get_my_reviews', 'getMyReviews');
+});
+
+
+
+Route::controller(App\Http\Controllers\bidController::class)->group(function () {
+
+
+    Route::post('/send_bid', 'sendBid')->middleware('onlyAuthorized');
+    Route::get('/get_bids', 'getBids')->middleware('onlyAuthorized');
+    Route::post('/confirm_bid', 'confirmBid')->middleware('onlyAuthorized');
+    Route::delete('/delete_bid', 'deleteBid')->middleware('onlyAuthorized');
+});
+
+Route::controller(App\Http\Controllers\AdminPanel\AdminController::class)->group(function () {
+    
+    Route::get('admin/all_cities', 'getCities');
+    Route::post('admin/create_city', 'createCity');
+    Route::delete('admin/delete_city', 'deleteCity');
+    Route::patch('admin/change_city', 'changeCity');
+
+    
+    Route::get('admin/all_categories', 'getCategories');
+    Route::post('admin/create_category', 'createCategory');
+    Route::delete('admin/delete_category', 'deleteCategory');
+    Route::patch('admin/change_category', 'changeCategory');
+    
+    Route::get('admin/get_all_users', 'getUsers');
+    Route::get('admin/get_all_posts', 'getPosts');
+    
+    Route::post('admin/change_user_status', 'changeUserStatus');
+    
+    Route::post('admin/change_post_status', 'changePostStatus');
+    
+    Route::get('admin/get_post_statusses', 'getPostStatuses');
+    Route::get('admin/get_user_statusses', 'getUserStatuses');
+    
+
+    // Route::get('/get_my_reviews', 'getMyReviews');
+});
+
+
+Route::post('/callback', function (Request $request) {
     return response()->json($request);
 });

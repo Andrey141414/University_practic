@@ -8,14 +8,18 @@ use App\Models\postModel;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\postFilterRequest;
 use App\Models\AddressModel;
 use App\Models\CategoryModel;
 use App\Models\CityModel;
 use App\Models\favoritePost;
-use App\Models\statusModel;
+use App\Models\postStatus;
+use App\Models\savedContacts;
 use App\Service\UserService;
 use App\Service\PostService;
+use App\Service\Validation\ValitationService;
+use phpseclib3\Crypt\EC\Curves\prime192v1;
 
 class postController extends Controller
 {
@@ -58,67 +62,42 @@ class postController extends Controller
     public function createPost(Request $request)
     {
         $id = auth('api')->user()->id;
-        //$post = (new postModel());
-        //$id = 7;
-        $validator = Validator::make($request->all(), [
+
+        $this->validator->set($request->all(), [
             'title' => 'required|string|between:1,50',
             'id_category' => 'required',
             'image_set' => 'required|between:1,5',
             'address' => 'required|size:3',
             'id_city' => 'required',
+            'show_email' => 'required|boolean'
         ]);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
+        }
 
-        
-        $validator1 = Validator::make($request->input('address'),[
+        $this->validator->set($request->input('address'), [
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'title' => 'required|string',
         ]);
-        
-        if ($validator->fails() || $validator1->fails()) {
-            return response()->json([
-                'message' => 'Validation error'
-            ], 400);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
         }
 
-        $address = $request->input('address');
-        $address['latitude'] = (double)$address['latitude'];
-        $address['longitude'] = (double)$address['longitude'];
-        $post = PostModel::create([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'date' => Carbon::now(),
-            'id_category' => $request->input('id_category'),
-            'id_user' => $id,
-            'address' => json_encode($address),
-            'id_city' => $request->input('id_city'),
-            'status' => statusModel::getStatusid('active'),
-        ]);
-        
-        $id_post =  $post->id;
 
-        $images = $request->input('image_set');
-        
-        Storage::disk("local")->makeDirectory($this->LocalPhotoPath.'/'. $id . '/' . $id_post);
 
-//        Storage::disk("local")->makeDirectory('public/' . 'IN_GOOD_HANDS/' . $id . '/' . $id_post);
+        $props = $request->all();
+        $props['address']['latitude'] = (float)$props['address']['latitude'];
+        $props['address']['longitude'] = (float)$props['address']['longitude'];
+        $props['created_at'] = Carbon::now();
+        $props['updated_at'] = Carbon::now();
+        $props['id_user'] = $id;
+        $props['status'] = 'active';
+        $props['address'] = json_encode($props['address']);
 
-        //цикл
-        foreach ($images as $key => $data) {
-            $path = $this->LocalPhotoPath.'/' . $id . '/' . $id_post . '/' . $key . '.jpeg';
-            $data = base64_decode($data);
-            //Storage::disk("google")->put($path,$data);
+        //Log::debug($props);
 
-            Storage::disk("local")->put($path, $data);
-            //Storage::disk("local")->put('public/' . $path, $data);
-        }
-        //конец цикла
-
-        $post->update([
-            //'img_set_path' => 'IN_GOOD_HANDS/' . $id . '/' . $id_post,
-            'img_set_path' => $this->LocalPhotoPath.'/'. $id . '/' . $id_post,
-        ]); 
-        $post->save();
+        $id_post = PostService::newPost($props);
         return response()->json(["message" => "Data was saved", "id_post" => $id_post], 200);
     }
 
@@ -144,7 +123,7 @@ class postController extends Controller
         $post->delete();
         //Storage::disk("local")->deleteDirectory('public/' . $path);
         Storage::disk("local")->deleteDirectory($path);
-        
+
         return response()->json(["message" => "Data was deleted"], 200);
     }
 
@@ -153,80 +132,92 @@ class postController extends Controller
 
     public function changePost(Request $request)
     {
-        $id = auth('api')->user()->id;
-        $id_post = $request->input('id_post');
-        $post = (new postModel())->where('id', $id_post)->first();
-        if ($post == null) {
-            return response()->json([
-                "message" => "post is missing"
-            ], 204);
-        }
-        $id_user = auth('api')->user()->id;
-        if ($post->id_user != $id_user) {
-            return response()->json([
-                "message" => "There is no so address for you",
-            ], 204);
-        }
+        $props = $request->all();
 
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|between:1,50',
-            'id_category' => 'required',
-            'image_set' => 'required|between:1,5',
-            'address' => 'required',
-            'id_city' => 'required',
+        $this->validator->set($props, [
+            'id_post' => 'required|integer',
+            'title' => 'string|between:1,50',
+            'id_category' => 'integer',
+            'image_set' => 'between:1,5',
+            'address' => 'size:3',
+            'id_city' => 'integer',
+            'show_email' => 'required|boolean',
         ]);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
+        }
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation error'
-            ], 400);
+        if (isset($props['address'])) {
+            $this->validator->set($props['address'], [
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric',
+                'title' => 'required|string',
+            ]);
+            if (!$this->validator->validate()) {
+                return response()->json($this->validator->errors, 400);
+            }
+            $props['address']['latitude'] = (float)$props['address']['latitude'];
+            $props['address']['longitude'] = (float)$props['address']['longitude'];
         }
 
 
-        $post->title = $request->input('title');
-        $post->description = $request->input('description');
-        $post->id_category = $request->input('id_category');
-        $post->id_address = $request->input('id_address');
-
-
-      
-        $images = $request->input('image_set');
-        //Storage::disk("local")->makeDirectory('public/' . 'IN_GOOD_HANDS/' . $id . '/' . $id_post);
-
-        //цикл
-        foreach ($images as $key => $data) {
-            $path = 'IN_GOOD_HANDS/' . $id . '/' . $id_post . '/' . $key . '.jpeg';
-            $data = base64_decode($data);
-            Storage::disk("local")->put('public/' . $path, $data);
+        $post = postModel::find($props['id_post']);
+        if (!$post) {
+            return response()->json(["message" => "post is missing"], 405);
         }
-        //конец цикла
 
-        $post->img_set_path = 'IN_GOOD_HANDS/' . $id . '/' . $id_post;
-        $post->save();
-        return response()->json(["message" => "Data was saved"], 200);
+        if ($post->id_user != auth('api')->user()->id) {
+            return response()->json(["message" => "There is not your post"], 405);
+        }
+
+        $updatable = (new postModel())->updatable;
+        foreach ($props as $key => $prop) {
+            //Подумать выкидывать исключение или сохранять
+            if (!in_array($key, $updatable)) {
+                unset($props[$key]);
+            }
+        }
+
+        $post = PostService::updatePost($props, $post->id);
+
+        return response()->json($post);
     }
 
 
     public function getPost(Request $request)
     {
         $id_post = $request->get('id_post');
-        $post = (new postModel())->where('id', $id_post)->first();
+        $post = postModel::find($id_post);
+        $isMyPost = null;
+        $contacts = null;
+        if (auth('api')->user()) {
+            if (savedContacts::where('id_post', $request->get('id_post'))
+                ->where('id_user', auth('api')->user()->id)->first()
+            ) {
+                $id_contact_owner = User::find(postModel::find($id_post)->id_user)->id;
 
-        $image_set = [];
+                $contacts = [
+                    'phone' => User::find($id_contact_owner)->phone_number,
+                    'address' => json_decode(postModel::find($id_post)->address),
+                ];
+                if ($post->show_email) {
+                    $contacts['email'] = User::find($id_contact_owner)->email;
+                }
+            }
+
+            if ($post->id_user == auth('api')->user()->id) {
+                $isMyPost = true;
+            }
+        }
 
         $view_count = ($post->view_count);
         $post->view_count = ++$view_count;
-
-        //$path = 'public/IN_GOOD_HANDS/' . $post->id_user . '/' . $id_post;
-        $path = $this->LocalPhotoPath .'/' . $post->id_user . '/' . $id_post;
-        
-        $images_path = Storage::disk("local")->files($path);
-        foreach ($images_path as $key => $file) {
-            //https://in-good-hands.dev.mind4.me/PHOTOS/8/65/0.jpeg
-            $image_set[$key] = env('APP_DEV_URL').'/'.$file;// (Storage::url($file));
-        }
         $post->save();
-        return response()->json(PostService::getPostResponse($post->id,$image_set));
+
+        if ($isMyPost) {
+            $contacts = null;
+        }
+        return json_encode(PostService::getPostResponse($post->id, $contacts, $isMyPost));
     }
 
 
@@ -235,8 +226,8 @@ class postController extends Controller
     {
         $id_post = $request->get('id_post');
         //return $id_post;
-        $posts= postModel::where('id','!=',$id_post)->inRandomOrder()->limit(4)->get();
-        return json_decode(PostService::getPostsWithPagination($posts,4),true)["data"];
+        $posts = postModel::where('id', '!=', $id_post)->inRandomOrder()->limit(4)->get();
+        return json_decode(PostService::getPostsWithPagination($posts, 4), true)["data"];
     }
 
 
@@ -263,77 +254,59 @@ class postController extends Controller
     {
 
         $data = $request->all();
-        // $request->validated();
+        $query = PostService::queryFilter(postModel::query(), $data);
 
-        //echo(json_encode ($request->all()));
-        $query = postModel::query();
-
-        if (isset($data['id_category'])) {
-            $query->where('id_category', $data['id_category']);
-        }
-        if (isset($data['id_city'])) {
-            $id_addresses = (new AddressModel())->where('id_city', $data['id_city'])->pluck('id');
-            $query->whereIn('id_address', $id_addresses);
-            //
-        }
-
-        if (isset($data['title'])) {
-            $query->where('title', 'like', "%{$data['title']}%");
-        }
-
-        if (isset($data['sort_type'])) {
-            if ($data['sort_type'] == 'asc') {
-                $query->orderBy($data['sort_by'], 'asc');
-            }
-            if ($data['sort_type'] == 'desc') {
-                $query->orderBy($data['sort_by'], 'desc');
-            }
-        }
-
-        
         $posts = $query->get();
-        $posts = $posts->where('is_active');
+        $posts = $posts->where('status', 'active');
 
-        
+
         if (isset($data['sort_by']) && $data['sort_by'] == 'distance') {
-            if (isset($data['user_lat']) && isset($data['user_lon'])){
-                $postArr = PostService::sortPostsByDistance($posts,$data['user_lat'],$data['user_lon']);
+            if (isset($data['user_lat']) && isset($data['user_lon'])) {
+                $postArr = PostService::sortPostsByDistance($posts, $data['user_lat'], $data['user_lon']);
                 $posts = [];
-                foreach($postArr as $post)
-                {
+                foreach ($postArr as $post) {
                     $posts[] = (object)$post;
                 }
-                
+
                 $posts = collect($posts);
             }
         }
-        
-        
-        return PostService::getPostsWithPagination($posts,$this->pagination);
+
+
+        return PostService::getPostsWithPagination($posts, $this->pagination);
     }
 
-    public function userPostsData(postFilterRequest $request)
+    public function userPostsData(Request $request)
     {
-        $data = $request->validated();
-        $query = postModel::query();
+
+        $this->validator->set($request->all(), [
+            'title' => 'string',
+            'sort_type' => 'string',
+            'status' => 'string',
+        ]);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
+        }
         $id = auth('api')->user()->id;
+        $data = $request->all();
 
-        if (isset($data['title'])) {
-            $query->where('title', 'like', "%{$data['title']}%");
+        $query = PostService::queryFilter(postModel::query(), $data);
+
+
+        if (isset($data['status'])) {
+            $query->where('status', $data['status']);
         }
-
-        if (isset($data['sort_type'])) {
-            if ($data['sort_type'] == 'asc') {
-                $query->orderBy('date', 'asc');
-            }
-            if ($data['sort_type'] == 'desc') {
-                $query->orderBy('date', 'desc');
-            }
-        }
-
         $posts = $query->orderBy('id', 'desc')->get();
         $posts = $posts->where('id_user', $id);
-        return PostService::getPostsWithPagination($posts,$this->pagination);
+
+        $posts = json_decode($posts, true);
+        $new = [];
+        foreach ($posts as $post) {
+            $post['like_count'] = favoritePost::where('id_post', $post['id'])->count();
+            $new[] = (object)$post;
+        }
+        $posts = collect($new);
+        return PostService::getPostsWithPagination($posts, $this->pagination, true);
     }
     ////////////
 
@@ -387,7 +360,7 @@ class postController extends Controller
         return $answer;
     }
 
-    
+
 
 
     public function getPostForChange(Request $request)
@@ -405,28 +378,34 @@ class postController extends Controller
             ], 204);
         }
 
-        return $this->getPost($request);
-
-        // $path = $this->LocalPhotoPath.'/' . $post->id_user . '/' . $id_post;
-        // $images_path = Storage::disk("local")->files($path);
-        // foreach ($images_path as $key => $file) {
-        //     $image_set[$key] = env('APP_DEV_URL') . (Storage::url($file));
-        // }
-        // $post->save();
-        // $user = (new User())->where('id', $post->id_user)->first();
-
-        // $address = (new AddressModel())->where('id', $post->id_address)->first();
-
-
-        // return response()->json(PostService::getPostResponse($post->id,$image_set));
+        $response = json_decode($this->getPost($request), true)['post'];
+        $response["address"] = json_decode($post->address);
+        return  json_encode($response);
     }
 
     public function getContact(Request $request)
     {
+
         $id_post = $request->get('id_post');
         $id_user = postModel::find($id_post)->id_user;
         $phone_number = User::find($id_user)->phone_number;
         $address = postModel::find($id_post)->address;
+
+        $loyalty_balanse = User::find(auth('api')->user()->id)->loyalty_balanse;
+        if ($loyalty_balanse <= 0) {
+            return response()->json(['Ваш рейтинг лояльности слишком низкий']);
+        };
+
+
+        if (!savedContacts::isContactsSaved(auth('api')->user()->id, $id_post)) {
+            $loyalty_balanse--;
+            $user = User::find(auth('api')->user()->id);
+            $user->loyalty_balanse = $loyalty_balanse;
+            $user->save();
+            savedContacts::saveContacts(auth('api')->user()->id, $id_post);
+        } else {
+            return response()->json('Contact is already get');
+        }
         return response()->json([
             "phone" => $phone_number,
             "address" => json_decode($address),
@@ -438,11 +417,10 @@ class postController extends Controller
         $posts = UserService::getAllUserPosts($request->get('id_user'));
 
         $postOnPage = $request->get('limit');
-        if(!$postOnPage)
-        {
+        if (!$postOnPage) {
             $postOnPage = $this->pagination;
         }
-        return PostService::getPostsWithPagination($posts,$postOnPage);
+        return PostService::getPostsWithPagination($posts, $postOnPage);
     }
 }
 

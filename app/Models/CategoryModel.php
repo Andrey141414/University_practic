@@ -14,6 +14,13 @@ class CategoryModel extends Model
         'is_active' => 'boolean',
     ];
 
+    protected $fillable = [
+        'name',
+        'is_active',
+        'icon',
+    ];
+    protected $guarded = [];
+    
     
     public static function getCategoryModel($id_category)
     {

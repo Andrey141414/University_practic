@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-<p>Код подтверждения - </p>
-<?php echo($code); ?></a>
-
+<body style="
+    text-align: center;
+    font-size: larger;">
+<img src="https://in-good-hands.dev.mind4.me/logo.jpg">
+    <p>Код подтверждения - <?php echo($code); ?></a></p>
 </body>
 </html>

@@ -20,6 +20,551 @@
     ],
     "paths": {
         "/": {},
+        "/api/admin/all_cities": {
+            "get": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Получение списка городов",
+                "operationId": "16ab9711c5e716f25eb2ecae09ee1d22",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/create_city": {
+            "post": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Создание города",
+                "operationId": "fffe2e204519cb84eb8a1de3a7bc8cb3",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "is_active"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Вологда"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/delete_city": {
+            "delete": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Удаление города",
+                "operationId": "a5886de7f05c666fc81b5b57af86a8f1",
+                "parameters": [
+                    {
+                        "name": "id_city",
+                        "in": "query",
+                        "required": true,
+                        "example": 9
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/change_city": {
+            "patch": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Изменение города",
+                "operationId": "ad612dd3e417cb72f5ffcee98d50a966",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_city",
+                                    "name",
+                                    "is_active"
+                                ],
+                                "properties": {
+                                    "id_city": {
+                                        "type": "integer"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Вологда"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/all_categories": {
+            "get": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Получение списка категорий",
+                "operationId": "89e60f0fac5aa194a8f121400fc60ff1",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/create_category": {
+            "post": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Создание категории",
+                "operationId": "e356341a60b21fa5b4a1dab97c890b30",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "icon",
+                                    "name",
+                                    "is_active"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Новое название"
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "👕"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/delete_category": {
+            "delete": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Удаление категории",
+                "operationId": "6e2b76e33f859777e365b632e45eda0f",
+                "parameters": [
+                    {
+                        "name": "id_category",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/change_category": {
+            "patch": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Изменение категории",
+                "operationId": "bdd6ed891cb95d8312d72b83fdbaded3",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_category",
+                                    "icon",
+                                    "name",
+                                    "is_active"
+                                ],
+                                "properties": {
+                                    "id_category": {
+                                        "type": "integer"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Новое название"
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "👕"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/get_all_users": {
+            "get": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Получение списка пользователей",
+                "operationId": "cad185918bc539ca4ec882c566e75c0c",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "name": "id_user",
+                        "in": "query",
+                        "required": false,
+                        "example": 123
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "required": false,
+                        "example": "user@mail.com"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/admin/get_all_posts": {
+            "get": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Получение списка постов ",
+                "operationId": "fa4a8bfc3157712a018156ff58b3d8bb",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "name": "id_user",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "id_city",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "id_category",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "required": false,
+                        "example": "Еда"
+                    },
+                    {
+                        "name": "sort_type",
+                        "in": "query",
+                        "required": false,
+                        "example": "asc"
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "required": false,
+                        "example": "date"
+                    },
+                    {
+                        "name": "id_ad",
+                        "in": "query",
+                        "required": false,
+                        "example": 123
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/admin/change_user_status": {
+            "post": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Изменение статуса пользователя",
+                "operationId": "5a7169c9ad76f3f0a2d97ab3e2ad95b8",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_user",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "id_user": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "banned"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/change_post_status": {
+            "post": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Изменение статуса пользователя",
+                "operationId": "7906e9f56a9d333ce5c7193a03876922",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_post",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "id_post": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "banned"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/get_post_statuses": {
+            "get": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Получение списка статусов поста",
+                "operationId": "5452a0f5c83c8ae0af144c523b85fadc",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/get_user_statuses": {
+            "get": {
+                "tags": [
+                    "Administrator"
+                ],
+                "summary": "Получение списка статусов пользователя",
+                "operationId": "c2db544be6477984da978905de15391b",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/auth/registr": {
             "post": {
                 "tags": [
@@ -165,6 +710,167 @@
                 }
             }
         },
+        "/api/send_bid": {
+            "post": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Отправить заявку на бронирование",
+                "operationId": "f7255b4d012ca6de9b0af918cfd23bd0",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_post",
+                                    "days"
+                                ],
+                                "properties": {
+                                    "id_post": {
+                                        "type": "integer",
+                                        "example": 111
+                                    },
+                                    "days": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_bids": {
+            "get": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Получить заявки на бронирование (входящие или исходящие)",
+                "operationId": "342c3cff35a80cef2894fceda5b3f427",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 3
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "required": true,
+                        "example": "outcoming"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/confirm_bid": {
+            "post": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Подтвердить заявку на бронирование",
+                "operationId": "1418b3f7a634a14c7b91881c22c52c49",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_bid"
+                                ],
+                                "properties": {
+                                    "id_bid": {
+                                        "type": "integer",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/delete_bid": {
+            "delete": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Отклонить\\удалить заявку на бронирование",
+                "operationId": "d097a8d5ffbda8d6b1db42ca1a1e31f2",
+                "parameters": [
+                    {
+                        "name": "id_bid",
+                        "in": "query",
+                        "required": true,
+                        "example": 9
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/sent_code": {
             "get": {
                 "tags": [
@@ -292,6 +998,130 @@
                 }
             }
         },
+        "/api/delete_reservation": {
+            "delete": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Удаление брони",
+                "operationId": "c639e1749cb3bf541b79e7b54a04a89a",
+                "parameters": [
+                    {
+                        "name": "id_reservation",
+                        "in": "query",
+                        "required": true,
+                        "example": 9
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_reservations": {
+            "get": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Получить бронирования",
+                "operationId": "76916648a6f15dd2d3d17f6538f3da68",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 3
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "name": "statuses[]",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/change_reservation_status": {
+            "patch": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Изменить статус брони",
+                "operationId": "a4588486cdbd8b38a1df296f6f37c0eb",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_reservation",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "id_reservation": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "cancel"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/create_review": {
             "post": {
                 "tags": [
@@ -311,7 +1141,7 @@
                                     "text"
                                 ],
                                 "properties": {
-                                    "id_user_owner": {
+                                    "id_reservation": {
                                         "type": "integer",
                                         "example": 1
                                     },
@@ -422,6 +1252,57 @@
                         "description": "successful operation"
                     }
                 }
+            }
+        },
+        "/api/change_user_info": {
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Изменение данных пользователя",
+                "operationId": "dc064da01c05e88bfd68fdd4707ff31c",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Новое имя"
+                                    },
+                                    "email": {
+                                        "type": "email",
+                                        "example": "new@.com"
+                                    },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "+7(123)4567890"
+                                    },
+                                    "id_city": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "402": {
+                        "description": "Incorrect code"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
             }
         }
     },

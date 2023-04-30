@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Service\Validation\ValitationService;
+
 use Illuminate\Routing\Controller as BaseController;
 
 /**
@@ -46,10 +48,11 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    protected ValitationService $validator;
     public function __construct()
-{
-    ini_set('max_execution_time', 300);
-    ini_set('max_input_time', 600);
-}
-
+    {
+        ini_set('max_execution_time', 300);
+        ini_set('max_input_time', 600);
+        $this->validator = new ValitationService();
+    }
 }

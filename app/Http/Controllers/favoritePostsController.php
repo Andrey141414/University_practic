@@ -55,7 +55,7 @@ class favoritePostsController extends Controller
             'id_user'=>$id_user
         ]);
         
-        return response()->json(["mewssage"=>"post has been added to favorites"],200); 
+        return response()->json(["message"=>"post has been added to favorites"],200); 
 
     }
 
@@ -81,7 +81,7 @@ class favoritePostsController extends Controller
         }
         
         $favoritePost->delete();
-        return response()->json(["mewssage"=>"post has been deleted from favorites"],200); 
+        return response()->json(["message"=>"post has been deleted from favorites"],200); 
 
     }
 

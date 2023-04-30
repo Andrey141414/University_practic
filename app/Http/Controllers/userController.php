@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\testRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\CityModel;
@@ -12,42 +13,93 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Validator;
 use App\Service\UserService;
-
+use Illuminate\Support\Carbon;
+use App\Models\postStatus;
+use App\Service\PostService;
+use App\Service\RolePolicyService;
+use Intervention\Image\Facades\Image;
 class userController extends Controller
 {
-    public function userInfo(User $user)
+
+
+
+    /**
+     * @OA\Patch(
+     *     path="/api/change_user_info",
+     *     summary="Изменение данных пользователя",
+     *     tags={"User"},
+     *     security={
+     *           {"passport": {}},
+     *      },
+     *     @OA\RequestBody(
+     *     required=true,
+     *     description="Pass user credentials",
+     *      @OA\JsonContent(
+     *       @OA\Property(property="name", type="string", example="Новое имя"),
+     *       @OA\Property(property="email", type="email", example="new@.com"),
+     *       @OA\Property(property="phone_number", type="string", example="+7(123)4567890"),
+     *       @OA\Property(property="id_city", type="int", example="1"),
+     *    ),),
+     * 
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Schema(
+     *             type="string",         
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="Incorrect code",
+     *     ),
+     * )
+     */
+
+
+    public function changeUserInfo(Request $request)
     {
 
-        //$rating = 0;
+        $props = $request->all();
+        $validator = Validator::make($request->all(), [
+            'name' => 'string|',
+            'email' => 'email|',
+            'phone_number' => 'string|',
+            'id_city' => 'integer|',
+        ]);
 
-       
-        // foreach ($reviews as $review) {
-        //     $rating += $review->score;
-        // }
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error'
+            ], 400);
+        }
 
-        // if(count($reviews) == 0)
-        // {
-        //     $rating = 0;
-        // }
-        // else
-        // {
-        //     $rating /= count($reviews);
-        // } 
+        $user = User::find(auth('api')->user()->id);
+        if (isset($props['email']) && ($props['email'] != (string)$user->email)) {
+            $user->email_verified_at = null;
+        }
+        $user->Update($props);
+
+        return $this->userInfo($user);
+    }
+    public function userInfo(User $user)
+    {
         $reviews = reviewModel::where('id_user_owner', $user->id)->get();
         return response()->json([
             'id' => $user->id,
             'email' => $user->email,
             'name' => $user->name,
-            'email_verified_at' => isset($user->email_verified_at) ? date('d-m-Y',strtotime($user->email_verified_at)) : null,
+            'email_verified_at' => isset($user->email_verified_at) ? date('d-m-Y', strtotime($user->email_verified_at)) : null,
             'phone_number' => $user->phone_number,
             'blocked_admin' => $user->blocked_admin,
             'num_login_attempts' => $user->num_login_attempts,
-            'is_admin' => $user->is_admin,
-            'id_city' => CityModel::find($user->id_city)->id,
+            'city' => CityModel::getCityModel($user->id_city),
             'addresses' => (AddressModel::where('id_user', $user->id))->get(),
             'created_at' => date('d-m-Y', strtotime($user->created_at)),
             'rating' => UserService::calculateRating($user->id),
             'reviews' => count($reviews),
+            'balance' => $user->loyalty_balanse,
+            'permissions' => RolePolicyService::getUsreRoles($user->id),
+            'status' => $user->status,
         ]);
     }
 
@@ -66,164 +118,48 @@ class userController extends Controller
         return response()->json('account was deleted', 200);
     }
 
-    public function test1()
+
+
+
+    public function test()
     {
-        //print_r(Storage::allDirectories('/public/IN_GOOD_HANDS'));
-        return Storage::allDirectories('/public/IN_GOOD_HANDS');
-    }
+        //application/vendor/intervention/image/src/Intervention/Image/Facades
 
 
-
-
-    public function test(Request $request)
-    {
-
-//         $json = file_get_contents('http://maps.google.com/maps/nav?q=from:Buderim,Australia%20to:Brisbane,Australia');
-
-// $details = json_decode($json, TRUE);
-
-// var_dump($details['Directions']['Distance']['meters']);
-
-// print_r(Storage::allDirectories('/public/IN_GOOD_HANDS'));
-
-       //Storage::disk('local')->deleteDirectory('PHOTOS8');
-        //print_r(Storage::disk('public')->allDirectories('/'));
-               
-        // foreach(Storage::disk('local')->allDirectories('/public') as $folder)
-        // {
-        //     Storage::disk('local')->deleteDirectory($folder);
-        // }
+        //$image = new Image();
+        $img = Image::make('/home/in-good-hands/web/in-good-hands.dev.mind4.me/application/public/logo.jpg')
+        ->resize(500, 500)
+        ->save('/home/in-good-hands/web/in-good-hands.dev.mind4.me/application/public/log1.jpg');
+        return $img->response('jpg');
         
-        //echo(json_encode() );
+        return;
+        $props = [
+            'title' => 'Empty',
+            'description' => 'Empty',
+            'id_category' => 1,
+            'image_set' => [
+                config('photo.generatePhoto'),
+                config('photo.generatePhoto'),
+            ],
+            "address" =>  [
+                "title" =>  "г Барнаул, Малый Прудской пер, д 46, кв 34",
+                "longitude" =>  83.7543103,
+                "latitude" =>  53.3285879
+            ],
+            'id_city' => 1,
+        ];
+        $props['address']['latitude'] = (float)$props['address']['latitude'];
+        $props['address']['longitude'] = (float)$props['address']['longitude'];
+        $props['created_at'] = Carbon::now();
+        $props['updated_at'] = Carbon::now();
+        $props['id_user'] = 2;
+        $props['status'] = ('active');
+        $props['address'] = json_encode($props['address']);
 
-        //return;
-        //'{"title":"\u0433 \u0411\u0430\u0440\u043d\u0430\u0443\u043b, \u041a\u0440\u0430\u0441\u043d\u043e\u0430\u0440\u043c\u0435\u0439\u0441\u043a\u0438\u0439 \u043f\u0440-\u043a\u0442, \u0434 3","longitude":"83,78349","latitude":"53,32353"}';
-        
-
-        $address = $request->input('address');
-        
-
-        
-        // $validator = Validator::make($request->all(),[
-        //     'address' => 'required|size:3',
-        // ]);
-        
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'message' => 'Validation error'
-        //     ], 400);
-        // }
-        
-
-        //return count($address);
-        
-        $validator = Validator::make($address,[
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'title' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation error'
-            ], 400);
+        for ($i = 0; $i < 1; $i++) {
+            PostService::newPost($props);
         }
 
-        $address['longitude'] = (double)($address['longitude']);
-
-        return $address;
-        //Storage::disk("local")->makeDirectory('public/'.'IN_GOOD_HANDS/'.$id.'/'.$id_post);
-
-        //цикл
-        //Storage::disk("local")->makeDirectory('123',"0777");
-
-        // foreach(Storage::disk("local")->allDirectories() as $dir)
-        // {
-        //     if(Storage::disk("local")->allFiles())
-        // }
-
-        //$response = Storage::disk("local")->deleteDirectory('public/TEST');
-
-        //$response = Storage::disk("local")->allDirectories();
-        $response = Storage::disk("local")->allFiles('public/IN_GOOD_HANDS/6/16');
-
-        // $path = '123'.'/1.jpeg';
-        // $data = base64_decode($request->input('data'));
-        // Storage::disk("local")->put($path,$data);
-
-        //конец цикла
-        return $response;
+        return;
     }
 }
-
-
-
-    //$items_num = 10;
-    //     $posts = (new postModel())::all();
-    //     //return $posts;
-    //     $address = [];
-    //     for($i = 0;$i<10;$i++ )
-    //     {
-    //     $address[$i] = AddressModel::where('id',$posts->paginate($items_num)->items()[$i]->id_address)->first();
-    //     }
-    //     return $address;
-    //     return [Storage::disk("local")->allDirectories(),Storage::disk("local")->allFiles(),201];
-    //     // // $arr = [];
-    //     // // $arr[0] = 1;
-    //     // // $arr[1] = 4;
-    //     // $id = 18;
-    //     // $id_post = 15;
-    //     // $post = (new postModel())->where('id',$id_post)->first();
-    //     // $post->img_set_path = 'IN_GOOD_HANDS/'.$id.'/'.$id_post;
-    //     //(new postModel())->where('title', null)->delete();
-        
-    //     //Kernel
-        
-
-    //     // $posts = (new postModel())::all();
-    //     // foreach($posts as $post)
-    //     // {
-
-    //     //     $path = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-    //     //     $content = Storage::disk("google")->get($path.'/0.jpeg');
-    //     //     Storage::disk("local")->makeDirectory($path);
-    //     //     Storage::disk("local")->put($path.'/0.jpeg',$content);
-
-    //     // } 
-
-    //     //Storage::disk("local")->deleteDirectory('IN_GOOD_HANDS');
-    //     // $path = 'IN_GOOD_HANDS/12/111';
-    //     // $a = Storage::disk("local")->exists($path.'/example.txt');
-        
-
-    // //$pool = new DefaultPool(8);
-
- 
-
-    // // $pageSources = collect($urls)->parallelMap(function ($url) {
-    // // return file_get_contents($url);
-    // // });
-    //     return Storage::url('\IN_GOOD_HANDS\81\162\0.jpeg');
-
-    //     // $items_num = 3;
-    //     // $posts = new postModel();
-    //     // $previews = array();
-
-    //     // for($i = 0;$i<$items_num;$i++)
-    //     // {
-    //     //     $path = $posts->simplePaginate($items_num)->items()[$i]->img_set_path;
-    //     //     array_push($previews,base64_encode(Storage::disk("google")->get($path.'/0.jpeg')));
-    //     // }
-
-        
-        
-    //     // return [$path = $posts->simplePaginate($items_num),( $previews)];
-
-    //     // $user_posts = (new postModel())->where('id_user',18)->get();
-    //     // return (new postModel())->where('id_user',18)->simplePaginate(4)->items()[2]->img_set_path;
-
-
-
-    //     $previews = array();
-    //     $previews  = (new postModel())->pluck('img_set_path')->toArray();
-    //     return $previews;

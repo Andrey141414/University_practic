@@ -22,50 +22,16 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();>= now() - interval 2 hour
-        $schedule->call(function () {
-            accessTokens::whereRaw('expires_at < now()')->delete();
-        })->daily();
+        // $schedule->call(function () {
+        //     accessTokens::whereRaw('expires_at < now()')->delete();
+        // })->daily();
 
-        $schedule->call(function () {
-            refreshTokens::whereRaw('expires_at < now()')->delete();
-        })->daily();
+        // $schedule->call(function () {
+        //     refreshTokens::whereRaw('expires_at < now()')->delete();
+        // })->daily();
 
-        
-        $schedule->call(function () {
-            
-        if (Storage::disk("local")->exists('public/IN_GOOD_HANDS/is_exist.txt')) {}
-        
-        else{
-
-                $posts = (new postModel())::all();
-
-                $paths = [];
-                foreach($posts as  $key =>  $post)
-                {
-                    $paths[$key] = 'IN_GOOD_HANDS/'.$post->id_user.'/'.$post->id;
-                }
-                
-                foreach($paths as $key=>$path)
-                {
-                    
-                    Storage::disk("local")->makeDirectory('public/'.$path);
-                    for($i = 0;$i < count(Storage::disk("google")->allFiles($path));$i++)
-                    {
-                        
-                        $content = Storage::disk("google")->get($path.'/'.$i.'.jpeg');
-                        Storage::disk("local")->put('public/'.$path.'/'.$i.'.jpeg',$content);
-                        
-                        
-                    }
-                };
-                
-                $content = Storage::disk("google")->get('IN_GOOD_HANDS/is_exist.txt');
-                Storage::disk("local")->put('public/IN_GOOD_HANDS/is_exist.txt',$content);
-            }
-             
-        })->everyMinute();
-
-       
+        $schedule->command('delete:oldRes')->daily();
+        //$schedule->command('command:hb')->everyMinute();
 
     }
 

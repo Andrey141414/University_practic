@@ -9,6 +9,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Notifications\Notifiable;
 // use Laravel\Sanctum\HasApiTokens;
 use Laravel\Passport\HasApiTokens;
+
 class User extends Authenticatable 
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -23,12 +24,13 @@ class User extends Authenticatable
         'email',
         'password',
         'phone_number',
-        'blocked_admin',
+        //'blocked_admin',
         'num_login_attempts',
         'is_admin',
         'id_city',
-        'email_code'
-
+        'email_code',
+        'loyalty_balanse',
+        'status'
     ];
 
     /**

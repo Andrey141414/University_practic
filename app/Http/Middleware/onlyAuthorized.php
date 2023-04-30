@@ -16,17 +16,14 @@ class onlyAuthorized
      */
     public function handle(Request $request, Closure $next)
     {
-    
+
         //if (auth('api')->user() == null)
-        if(auth('api')->user() == null)
-		{
+        if (auth('api')->user() == null) {
             return response()->json([
-                        'message' => 'Unauthorized'
-                    ], 401);
-		}
-        else
-        {
-        return $next($request);
+                'message' => 'Unauthorized'
+            ], 401);
+        } else {
+            return $next($request);
         }
-   }
+    }
 }
