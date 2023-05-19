@@ -157,13 +157,20 @@ class favoritePostsController extends Controller
         $posts = $posts->find($id_post_result);
         $buff = $posts->find($id_post_result);
         
+
+        $postOnPage = $request->get('limit');
+        if (!$postOnPage) {
+            $postOnPage = $this->pagination;
+        }
+
+
         $i = 0;
         foreach($posts as $key => $post)
         {
            $posts[$key] = $buff->where('id',$id_post_result[$i])->first();
            $i++;
         }
-        return PostService::getPostsWithPagination($posts,$this->pagination);
+        return PostService::getPostsWithPagination($posts,$postOnPage);
     }
 
 

@@ -19,6 +19,8 @@ use App\Models\postStatus;
 use App\Models\reservation;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Log;
+use App\Service\HelpService;
+
 class PostService
 {
 
@@ -40,8 +42,8 @@ class PostService
                 "id" => $paginate_post->id,
                 "title" => $paginate_post->title,
                 "description" => $paginate_post->description,
-                "created_at" => $paginate_post->created_at  ? date('d-m-Y', strtotime($paginate_post->created_at)) : null,
-                "updated_at" => $paginate_post->updated_at ? date('d-m-Y', strtotime($paginate_post->updated_at)) : null,
+                "created_at" => $paginate_post->created_at  ? HelpService::formatDate($paginate_post->created_at) : null,
+                "updated_at" => $paginate_post->updated_at ? HelpService::formatDate($paginate_post->updated_at) : null,
                 "image_set" => $image_set,
                 "view_count" => $paginate_post->view_count,
                 "user" => UserService::getShortUserModel($paginate_post->id_user),
@@ -54,12 +56,10 @@ class PostService
                 $data[$i]["address"] = json_decode($paginate_post->address);
 
                 if ($paginate_post->status == 'reserved') {
-                    $reservation = reservation::where('id_post' , $paginate_post->id)->first();
-                    if(isset($reservation))
-                    {
+                    $reservation = reservation::where('id_post', $paginate_post->id)->first();
+                    if (isset($reservation)) {
                         $data[$i]["reservation_data"] = ReservationService::getShortReservationModel($reservation->id);
                     }
-                    
                 }
             }
 
@@ -104,8 +104,8 @@ class PostService
             'id' => $post->id,
             'title' => $post->title,
             'description' => $post->description,
-            'created_at' => date('d-m-Y', strtotime($post->created_at)),
-            'updated_at' => date('d-m-Y', strtotime($post->updated_at)),
+            'created_at' => HelpService::formatDate($post->created_at),
+            'updated_at' => HelpService::formatDate($post->updated_at),
             'category' => CategoryModel::getCategoryModel($post->id_category),
             'image_set' => $image_set,
             'city' => CityModel::getCityModel($post->id_city),
@@ -114,13 +114,19 @@ class PostService
             'user' => UserService::getShortUserModel($post->id_user),
         ];
 
-        
+
 
         if (isset($isMypost)) {
             $response['address'] = json_decode($post->address);
         }
         if (isset($contacts)) {
-            $response['contacts'] = $contacts;
+            $response['contacts'] = [
+                'phone' => User::find($post->id_user)->phone_number,
+                'address' => json_decode(postModel::find($post->id)->address),
+            ];
+            if ($post->show_email) {
+                $response['contacts']['email'] = User::find($post->id_user)->email;
+            }
         }
 
         return  $response;
@@ -186,30 +192,37 @@ class PostService
         return (round($distance, 2));
     }
 
-    function savePhoto($images, $folder)
+    function savePhoto($images, $folder, $crop)
     {
 
-        // dispatch(new SavePhoto($images, $folder));
-        // return;
-         foreach ($images as $key => $data) {
-            $path =  $folder . '/' . $key . '.jpeg';
-            
-            Log::debug($path);
-            
-            $data = base64_decode($data);
-            $img = Image::make($data)
-            ->resize(1024, 1024);
-
-            Storage::disk("local")->put($path,$img->encode('jpeg'));
+        if ($crop) {
+            foreach ($images as $key => $data) {
+                $path =  $folder . '/' . $key . '.jpeg';
+                $data = base64_decode($data);
+                $img = Image::make($data)
+                    ->resize($crop['length'], $crop['width']);
+                Storage::disk("local")->put($path, $img->encode('jpeg'));
+            }
+        } else {
+            foreach ($images as $key => $data) {
+                $path = $folder . '/' . $key . '.jpeg';
+                $data = base64_decode($data);
+                Storage::disk("local")->put($path, $data, 'public');
+            }
         }
     }
 
     static function updatePost($props, $id_post)
     {
         $images = null;
+        $crop = null;
         if (isset($props['image_set'])) {
             $images = $props['image_set'];
             unset($props['image_set']);
+        }
+        if (isset($props['crop'])) {
+            $crop = $props['crop'];
+            unset($props['crop']);
         }
         $post = postModel::find($id_post);
         $post->Update($props);
@@ -217,7 +230,8 @@ class PostService
         if ($images) {
             $postPhotoFolder = config('photo.localPhotoPath') . '/' . $post->id_user . '/' . $post->id;
             Storage::disk("local")->deleteDirectory($postPhotoFolder);
-            (new PostService)->savePhoto($images, $postPhotoFolder);
+            Storage::disk("local")->makeDirectory($postPhotoFolder, '777');
+            (new PostService)->savePhoto($images, $postPhotoFolder, $crop);
             //self::savePhoto($images, config('photo.localPhotoPath') . '/' . $post->id_user . '/' . $id_post);
         }
 
@@ -227,7 +241,12 @@ class PostService
     static function newPost($props)
     {
         $images = $props['image_set'];
+        $crop = null;
         unset($props['image_set']);
+        if (isset($props['crop'])) {
+            $crop = $props['crop'];
+            unset($props['crop']);
+        }
         $post = postModel::create($props);
 
         $postPhotoFolder = config('photo.localPhotoPath') . '/' . $post->id_user . '/' . $post->id;
@@ -235,7 +254,7 @@ class PostService
 
 
         Storage::disk("local")->makeDirectory($postPhotoFolder, '777');
-        (new PostService)->savePhoto($images, $postPhotoFolder);
+        (new PostService)->savePhoto($images, $postPhotoFolder, $crop);
 
 
         $post->update([
@@ -247,7 +266,7 @@ class PostService
     }
 
 
-    public static function queryFilter($query,$data,$extention = null)
+    public static function queryFilter($query, $data, $extention = null, $onlyActive = null)
     {
         if (isset($data['id_category'])) {
             $query->where('id_category', $data['id_category']);
@@ -265,10 +284,9 @@ class PostService
             $data['sort_by'] = 'created_at';
         }
 
-        if(!isset($data['sort_by']))
-        {
+        if (!isset($data['sort_by'])) {
             $data['sort_by'] = 'id';
-        } 
+        }
         if (isset($data['sort_type'])) {
             if ($data['sort_type'] == 'asc') {
                 $query->orderBy($data['sort_by'], 'asc');
@@ -279,65 +297,69 @@ class PostService
         }
 
 
-        if($extention)
-        {
-            if(isset($data['id_user'])) {
+        if ($extention) {
+            if (isset($data['id_user'])) {
                 $query->where('id_user', $data['id_user']);
             }
 
-            if(isset($data['id_ad'])) {
+            if (isset($data['id_ad'])) {
                 $query->where('id', $data['id_ad']);
             }
         }
+
+        if ($onlyActive) {
+            $query->whereIn('id_category', function ($_query) {
+                $_query->select('id')
+                    ->from('category')
+                    ->where('category.is_active', '1')
+                    ->get();
+            });
+
+            $query->whereIn('id_city', function ($_query) {
+                $_query->select('id')
+                    ->from('city')
+                    ->where('city.is_active', '1')
+                    ->get();
+            });
+        }
         return $query;
     }
-    
-    
+
+    public static function changeStatus($id_post, $status)
+    {
+        $post = postModel::find($id_post);
+        $post->Update([
+            'status' => $status
+        ]);
+
+        return PostService::getPostResponse($post->id);
+    }
+
+    public static function sortTitlesByLevenshtein($word, $posts, $limit)
+    {
+        $levenshteinArr = [];
+        $ids = [];
+        foreach ($posts as $post) {
+            $levenshteinArr[] = levenshtein($word, $post->title);
+            $ids[] = $post->id;
+        }
+
+        for ($j = 0; $j < count($levenshteinArr) - 1; $j++) {
+            for ($i = 0; $i < count($levenshteinArr) - $j - 1; $i++) {
+                if ($levenshteinArr[$i] > $levenshteinArr[$i + 1]) {
+                    // меняем местами элементы
+                    $tmp_var = $levenshteinArr[$i + 1];
+                    $levenshteinArr[$i + 1] = $levenshteinArr[$i];
+                    $levenshteinArr[$i] = $tmp_var;
+
+
+                    $tmp_var = $ids[$i + 1];
+                    $ids[$i + 1] = $ids[$i];
+                    $ids[$i] = $tmp_var;
+                }
+            }
+        }
+
+        return array_slice($levenshteinArr,0,$limit) ;
+    }
 }
-
-
-
-// public function GetPosts(mixed $posts)
-// {
-
-//     //Имя ID Дата регистрации
-//     $items_num = 10;
-
-//     $data = [];
-//     for ($i = 0; $i < $posts->paginate(10)->count(); $i++) {
-
-//         $paginate_post = $posts->paginate($items_num)->items()[$i];
-//         $user = User::find($paginate_post->id_user);
-//         $image_set = [];
-//         $image_set[] = env('APP_DEV_URL') . '/storage' . '/' . $paginate_post->img_set_path . '/0.jpeg';
-//         $data[$i] = ([
-//             "id" => $paginate_post->id,
-//             "title" => $paginate_post->title,
-//             "description" => $paginate_post->description,
-//             "date" => date('d-m-Y', strtotime($paginate_post->date)),
-//             "image_set" => $image_set,
-//             "view_count" => $paginate_post->view_count,
-//             "user" => [
-//                 "id" => $paginate_post->id_user,
-//                 "name" => $user->name,
-//                 "created_at" => date('d-m-Y', strtotime($user->created_at)),
-//             ],
-//             "city_title" => CityModel::where('id', $paginate_post->id_city)->first()->name,
-//             "category_title" => CategoryModel::where('id', $paginate_post->id_category)->first()->name,
-//             "address" => json_decode($paginate_post->address),
-//             "status" => postStatus::getStatusName($paginate_post->status),
-//         ]);
-//     }
-
-//     $anwer = json_encode([
-//         "page" => $posts->paginate($items_num)->currentPage(),
-//         "per_page" => $posts->paginate($items_num)->count(), //perPage(),,
-//         "total" => $posts->paginate($items_num)->total(),
-//         "total_pages" => $posts->paginate($items_num)->lastPage(),
-//         "data" => $data,
-
-//     ]);
-
-
-//     return $anwer;
-// }

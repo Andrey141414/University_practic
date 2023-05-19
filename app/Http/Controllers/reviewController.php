@@ -11,8 +11,12 @@ use App\Models\User;
 use App\Service\UserService;
 use Carbon\Carbon;
 use App\Service\LoyalitySystem;
+use App\Service\HelpService;
+
 class reviewController extends Controller
 {
+
+    protected $pagination = 5;
     /** 
      * @OA\Post(
      *     path="/api/create_review",
@@ -49,17 +53,14 @@ class reviewController extends Controller
         $id_user_writer = auth('api')->user()->id;
 
 
-        $validator = Validator::make($request->all(), [
-            //'id_user_owner' => 'required',
+        $this->validator->set($request->all(), [
             'score' => 'required',
             'text' => 'required',
             'id_reservation' => 'required',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation error'
-            ], 400);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
         }
 
 
@@ -71,21 +72,19 @@ class reviewController extends Controller
             $post = postModel::find($res->id_post);
             $review = reviewModel::create([
                 'text' => $request->input('text'),
-                'score' => $request->input('score'),
+                'score' => (int)$request->input('score'),
                 'id_user_writer' => $id_user_writer,
                 'id_user_owner' => $post->id_user,
                 'id_reservation' => $request->input('id_reservation'),
                 'created_at' => Carbon::now(),
             ]);
-            
+
             $loyality = new LoyalitySystem(User::find($post->id_user));
             $loyality->setScoreOnPost($request->input('score'));
-            
+
             $loyality = new LoyalitySystem(User::find($id_user_writer));
             $loyality->setReviewOnPost();
-            
-
-            return response()->json($review, 200);
+            return response()->json($this->getRewiewResponse($review), 200);
         }
         return response()->json('Error', 405);
     }
@@ -104,6 +103,18 @@ class reviewController extends Controller
      *       required=true,
      *       example = 9,
      *       ), 
+     *     @OA\Parameter(
+     *       name="limit",
+     *       in="query",
+     *       required=false,
+     *       example = 3,
+     *       ),
+     *     @OA\Parameter(
+     *       name="score",
+     *       in="query",
+     *       required=false,
+     *       example = "4",
+     *       ),  
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
@@ -119,20 +130,21 @@ class reviewController extends Controller
      */
     public function getReviews(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $this->validator->set($request->all(), [
             'id_user_owner' => 'required',
+            'limit' => 'integer',
+            'score' => 'integer'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation error'
-            ], 400);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
         }
-        return $this->getUserReviews((int)$request->id_user_owner);
-
-        // $reviews = reviewModel::where('id_user_owner',(int)$request->id_user_owner)->get();
-        // return response()->json($reviews,200);
-
+        $props = $request->all();
+        $orderScore = (isset($props['score'])) ? $props['score'] : null;
+        $reviews = collect($this->getUserReviews((int)$request->id_user_owner,$orderScore));
+        $this->pagination = isset($props['limit']) ? $props['limit'] : $this->pagination;
+        
+        return response()->json($this->getReviewsWithPagination($reviews, $this->pagination), 200);
     }
 
     /** 
@@ -142,7 +154,19 @@ class reviewController extends Controller
      *           {"passport": {}},
      *      },    
      *     summary="Посмотреть отзывы на себя",
-     *     tags={"Review"}, 
+     *     tags={"Review"},
+     *     @OA\Parameter(
+     *       name="limit",
+     *       in="query",
+     *       required=false,
+     *       example = 3,
+     *       ),
+     *     @OA\Parameter(
+     *       name="score",
+     *       in="query",
+     *       required=false,
+     *       example = "3",
+     *       ),   
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
@@ -156,21 +180,71 @@ class reviewController extends Controller
      *     ),
      * ),
      */
-    public function getMyReviews()
+    public function getMyReviews(Request $request)
     {
+        $this->validator->set($request->all(), [
+            'limit' => 'integer',
+            'score' => 'string'
+        ]);
+
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
+        }
+
+        $props = $request->all();
+        $this->pagination = isset($props['limit']) ? $props['limit'] : $this->pagination;
+        $orderScore = (isset($props['score'])) ? $props['score'] : null;
         $id_user_owner = auth('api')->user()->id;
-        return $this->getUserReviews($id_user_owner);
+        $reviews = collect($this->getUserReviews($id_user_owner, $orderScore));
+        return response()->json($this->getReviewsWithPagination($reviews, $this->pagination), 200);
     }
 
-    function getUserReviews($id_user_owner)
+    function getUserReviews($id_user_owner, $orderScore = null)
     {
-        $reviews = reviewModel::orderBy('created_at', 'desc')->where('id_user_owner', $id_user_owner)->get();
+        $query = reviewModel::query();
+        if ($orderScore) {
+            $query->where('score', $orderScore);
+        }
+        $reviews = $query->orderBy('created_at', 'desc')->where('id_user_owner', $id_user_owner)->get();
         foreach ($reviews as $review) {
             json_decode($review, true);
             $review['user_writer'] =  UserService::getShortUserModel($review->id_user_writer);
-            $review['created_at'] =  date('d-m-Y', strtotime($review['created_at']));
+            $review['created_at'] =  HelpService::formatDate($review['created_at']);
             unset($review['id_user_writer']);
         }
-        return response()->json($reviews, 200);
+
+
+        return $reviews;
+    }
+
+    function getRewiewResponse($review)
+    {
+        json_decode($review, true);
+        $review['user_writer'] =  UserService::getShortUserModel($review->id_user_writer);
+        $review['created_at'] =  HelpService::formatDate($review['created_at']);
+        unset($review['id_user_writer']);
+        return $review;
+    }
+
+
+    public function getReviewsWithPagination($reviews, $pagination)
+    {
+        $items_num = $pagination;
+        $data = [];
+        foreach ($reviews->paginate($items_num)->items() as $review) {
+
+            $data[] = json_decode($review, true);
+        }
+        $anwer = [
+            "page" => $reviews->paginate($items_num)->currentPage(),
+            "per_page" => $reviews->paginate($items_num)->count(), //perPage(),,
+            "total" => $reviews->paginate($items_num)->total(),
+            "total_pages" => $reviews->paginate($items_num)->lastPage(),
+            "data" => $data,
+
+        ];
+
+
+        return $anwer;
     }
 }

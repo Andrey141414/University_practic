@@ -31,7 +31,7 @@ class ValitationService
     public function set($data,$rules){
         $this->data = $data;
         $this->rules = $rules;
-        $in = '/home/in-good-hands/web/in-good-hands.dev.mind4.me/application/lang/en/validation.php';
+        $in = '/home/in-good-hands/web/in-good-hands.dev.mind4.me/application/lang/ru/validation.php';
         $this->messages = include $in;
     }
 
@@ -43,5 +43,10 @@ class ValitationService
             return null;
         }
         return true;
+    }
+
+    public function ruturnError(){
+        //return $this->errors;
+        return $this->errors->first();
     }
 }

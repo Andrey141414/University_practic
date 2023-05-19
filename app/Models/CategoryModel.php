@@ -12,6 +12,7 @@ class CategoryModel extends Model
     protected $table = "category";
     protected $casts = [
         'is_active' => 'boolean',
+        'is_primary' => 'boolean',
     ];
 
     protected $fillable = [

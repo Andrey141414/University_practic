@@ -521,13 +521,13 @@
                 ]
             }
         },
-        "/api/admin/get_post_statuses": {
+        "/api/admin/get_post_statusses": {
             "get": {
                 "tags": [
                     "Administrator"
                 ],
                 "summary": "Получение списка статусов поста",
-                "operationId": "5452a0f5c83c8ae0af144c523b85fadc",
+                "operationId": "f78b08d09344352228b60c8ca87d250e",
                 "responses": {
                     "200": {
                         "description": "successful operation"
@@ -543,13 +543,199 @@
                 ]
             }
         },
-        "/api/admin/get_user_statuses": {
+        "/api/admin/get_user_statusses": {
             "get": {
                 "tags": [
                     "Administrator"
                 ],
                 "summary": "Получение списка статусов пользователя",
-                "operationId": "c2db544be6477984da978905de15391b",
+                "operationId": "afa61e099005bb9e8cded6794b8e706c",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/get_pending_posts": {
+            "get": {
+                "tags": [
+                    "Moderator"
+                ],
+                "summary": "Получение списка постов ожидающих проверки модератора",
+                "operationId": "c050dc4ed0e9f62b5414224f79247a6c",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/admin/get_review_posts": {
+            "get": {
+                "tags": [
+                    "Moderator"
+                ],
+                "summary": "Получение списка постов в проверке",
+                "operationId": "0633ad059fcf81251a6c82d7d1b29826",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/admin/start_checking": {
+            "post": {
+                "tags": [
+                    "Moderator"
+                ],
+                "summary": "Начать проверку поста модератором",
+                "operationId": "9c55ef2c8e310ad2cb37bcf90bb0c031",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_post"
+                                ],
+                                "properties": {
+                                    "id_post": {
+                                        "type": "integer",
+                                        "example": 84
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/end_checking": {
+            "patch": {
+                "tags": [
+                    "Moderator"
+                ],
+                "summary": "Завершить проверку поста модератором",
+                "operationId": "e7ccc3c6a9013f94c74d80adb3c67638",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_checking",
+                                    "result"
+                                ],
+                                "properties": {
+                                    "id_checking": {
+                                        "type": "integer",
+                                        "example": 20
+                                    },
+                                    "result": {
+                                        "required": [
+                                            "is_public",
+                                            "text"
+                                        ],
+                                        "properties": {
+                                            "is_public": {
+                                                "type": "boolean"
+                                            },
+                                            "text": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/cancel_review": {
+            "patch": {
+                "tags": [
+                    "Moderator"
+                ],
+                "summary": "Поменять статус поста на О\\жидает проверки ",
+                "operationId": "b61b56b20f358a6109ca3dd88431d710",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_checking"
+                                ],
+                                "properties": {
+                                    "id_checking": {
+                                        "type": "integer",
+                                        "example": 20
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "successful operation"
@@ -940,7 +1126,7 @@
                 "tags": [
                     "Posts"
                 ],
-                "summary": "Get list of blog posts",
+                "summary": "Создать пост",
                 "operationId": "cd8190370e17959ca0676e6323b1c6a0",
                 "requestBody": {
                     "description": "Pass user credentials",
@@ -952,13 +1138,18 @@
                                     "title",
                                     "id_category",
                                     "image_set",
-                                    "address",
-                                    "id_city"
+                                    "id_city",
+                                    "show_email",
+                                    "address"
                                 ],
                                 "properties": {
                                     "title": {
                                         "type": "string",
-                                        "example": "Пальто"
+                                        "example": "Название"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Описание"
                                     },
                                     "id_category": {
                                         "type": "integer",
@@ -968,19 +1159,55 @@
                                         "type": "array",
                                         "items": {
                                             "type": "string",
-                                            "example": [
-                                                "The email field is required.",
-                                                "The email must be a valid email address."
-                                            ]
+                                            "example": ""
                                         }
                                     },
-                                    "address": {
-                                        "type": "boolean",
-                                        "example": "true"
-                                    },
                                     "id_city": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "show_email": {
                                         "type": "boolean",
-                                        "example": "true"
+                                        "example": true
+                                    },
+                                    "crop": {
+                                        "required": [
+                                            "length",
+                                            "width"
+                                        ],
+                                        "properties": {
+                                            "length": {
+                                                "type": "integer",
+                                                "example": "1024"
+                                            },
+                                            "width": {
+                                                "type": "integer",
+                                                "example": "1024"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "address": {
+                                        "required": [
+                                            "latitude",
+                                            "longitude",
+                                            "title"
+                                        ],
+                                        "properties": {
+                                            "latitude": {
+                                                "type": "string",
+                                                "example": "53.326089"
+                                            },
+                                            "longitude": {
+                                                "type": "string",
+                                                "example": "83.759681"
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "Свердлова 88"
+                                            }
+                                        },
+                                        "type": "object"
                                     }
                                 },
                                 "type": "object"
@@ -992,10 +1219,384 @@
                     "200": {
                         "description": "successful operation"
                     },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/delete_post": {
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Удалить объявление",
+                "operationId": "946587a11d22854ba861db9079a7476a",
+                "parameters": [
+                    {
+                        "name": "id_post",
+                        "in": "query",
+                        "required": true,
+                        "example": 450
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
                     "401": {
-                        "description": "Unauthorized user"
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/change_post": {
+            "patch": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Создать пост",
+                "operationId": "40257aaa2fb4ae8e1103107776a71345",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id_post"
+                                ],
+                                "properties": {
+                                    "id_post": {
+                                        "type": "integer",
+                                        "example": 450
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Название"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Описание"
+                                    },
+                                    "id_category": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "image_set": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "example": ""
+                                        }
+                                    },
+                                    "id_city": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "show_email": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "crop": {
+                                        "required": [
+                                            "length",
+                                            "width"
+                                        ],
+                                        "properties": {
+                                            "length": {
+                                                "type": "integer",
+                                                "example": "1024"
+                                            },
+                                            "width": {
+                                                "type": "integer",
+                                                "example": "1024"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "address": {
+                                        "required": [
+                                            "latitude",
+                                            "longitude",
+                                            "title"
+                                        ],
+                                        "properties": {
+                                            "latitude": {
+                                                "type": "string",
+                                                "example": "53.326089"
+                                            },
+                                            "longitude": {
+                                                "type": "string",
+                                                "example": "83.759681"
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "Свердлова 88"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_post": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Получить информацию об объявлении",
+                "operationId": "297225b62636b6f19ed21f8cae8ec69d",
+                "parameters": [
+                    {
+                        "name": "id_post",
+                        "in": "query",
+                        "required": true,
+                        "example": 450
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
+            }
+        },
+        "/api/similar_posts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Получить похожие объявления",
+                "operationId": "0fb2a570223d9ff641899bc6a6f5c353",
+                "parameters": [
+                    {
+                        "name": "id_post",
+                        "in": "query",
+                        "required": true,
+                        "example": 450
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/all_posts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Получить список всех объявлений с ппагинацией",
+                "operationId": "4ffb445c63b19091afdbac895f791778",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "name": "id_city",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "id_category",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "required": false,
+                        "example": "Еда"
+                    },
+                    {
+                        "name": "sort_type",
+                        "in": "query",
+                        "required": false,
+                        "example": "asc"
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "required": false,
+                        "example": "date"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/my_posts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Получить объявлений пользователя",
+                "operationId": "56b6dd0c03d7b8a16e1bbb65b8a590af",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 1
+                    },
+                    {
+                        "name": "id_city",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "id_category",
+                        "in": "query",
+                        "required": false,
+                        "example": 2
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "required": false,
+                        "example": "Еда"
+                    },
+                    {
+                        "name": "sort_type",
+                        "in": "query",
+                        "required": false,
+                        "example": "asc"
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "required": false,
+                        "example": "date"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "example": "active"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_contact": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Получить объявлений пользователя",
+                "operationId": "bc16a8755b422da784f41ddab2ecf2e2",
+                "parameters": [
+                    {
+                        "name": "id_post",
+                        "in": "query",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get_post_photos": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Получить фото объявления в base64 ",
+                "operationId": "5f281fb4e5853ba22730e66e7b7cae54",
+                "parameters": [
+                    {
+                        "name": "id_post",
+                        "in": "query",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
             }
         },
         "/api/delete_reservation": {
@@ -1187,6 +1788,18 @@
                         "in": "query",
                         "required": true,
                         "example": 9
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 3
+                    },
+                    {
+                        "name": "score",
+                        "in": "query",
+                        "required": false,
+                        "example": "4"
                     }
                 ],
                 "responses": {
@@ -1211,6 +1824,20 @@
                 ],
                 "summary": "Посмотреть отзывы на себя",
                 "operationId": "6c2371fc8b95268ff49c93a74e058dff",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "example": 3
+                    },
+                    {
+                        "name": "score",
+                        "in": "query",
+                        "required": false,
+                        "example": "3"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful operation"
@@ -1252,6 +1879,36 @@
                         "description": "successful operation"
                     }
                 }
+            }
+        },
+        "/api/get_short_user_info": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Получить краткую информацию о пользователе",
+                "operationId": "3223c2e1573a97e52b262e68fa4226a7",
+                "parameters": [
+                    {
+                        "name": "id_user",
+                        "in": "query",
+                        "required": true,
+                        "example": 8
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
             }
         },
         "/api/change_user_info": {

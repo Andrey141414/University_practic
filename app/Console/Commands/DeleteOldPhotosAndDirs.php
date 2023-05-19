@@ -31,7 +31,7 @@ class DeleteOldPhotosAndDirs extends Command
     public function handle()
     {
 
-        postModel::where('title','Empty')->delete();
+        //postModel::where('title','Empty')->delete();
 
         //Storage::disk("local")->put('/IN_GOOD_HANDS/test1.txt',123);
         //print_r((new userController)->test1()); 

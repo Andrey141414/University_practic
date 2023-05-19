@@ -8,7 +8,7 @@
 </head>
 <body>
     <p>Чтобы поменять пароль пройдите по ссылке</p>
-<a href="<?php echo ('https://in-good-hands-ae0f6.web.app/reset-password'.'?token='. $token)?>"><?php echo 'password-reset?token='. $token ?></a>
+<a href="<?php echo ('https://ingoodhands-2-0.web.app/reset-password'.'?token='. $token)?>"><?php echo 'password-reset?token='. $token ?></a>
 
 </body>
 </html>

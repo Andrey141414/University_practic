@@ -13,8 +13,6 @@ use App\Models\User;
 use App\Service\PostService;
 use App\Service\UserService;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-
 class AdminController extends Controller
 {
 
@@ -524,7 +522,6 @@ class AdminController extends Controller
         if (!$this->validator->validate()) {
             return response()->json($this->validator->errors, 400);
         }
-
         $user = User::find($request->input('id_user'));
         $user->Update([
             'status' => $request->input('status')
@@ -575,13 +572,8 @@ class AdminController extends Controller
         if (!$this->validator->validate()) {
             return response()->json($this->validator->errors, 400);
         }
-        //проверка на нужный статус
-        $post = postModel::find($request->input('id_post'));
-        $post->Update([
-            'status' => $request->input('status')
-        ]);
-
-        return PostService::getPostResponse($post->id);
+        
+        return PostService::changeStatus($request->input('id_post'),$request->input('status'));
     }
 
 
@@ -637,4 +629,10 @@ class AdminController extends Controller
     {
         return response()->json(DB::table('user_status')->get());
     }
+
+    public function changeUserRole(Request $request)
+    {
+        
+    }
+
 }

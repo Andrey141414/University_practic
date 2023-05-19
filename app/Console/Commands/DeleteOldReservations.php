@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\postModel;
 use Illuminate\Console\Command;
 use App\Models\reservation;
 use Carbon\Carbon;
@@ -30,9 +31,13 @@ class DeleteOldReservations extends Command
     public function handle()
     {
 
-        $reservations = reservation::where('expired_at', '<', Carbon::now())->get();
+        $reservations = reservation::where('expired_at', '<', Carbon::now())->where('status','completed')->get();
         foreach ($reservations as $res) {
-            $res->delete();
+            $res->status = 'overdue';
+            $res->save();
+            $post = postModel::find($res->id_post);
+            $post->status = 'active';
+            $post->save();
         }
         return Command::SUCCESS;
     }

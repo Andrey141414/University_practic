@@ -19,7 +19,7 @@ use App\Models\reservationStatus;
 use App\Models\reviewModel;
 use App\Models\BidModel;
 use App\Service\UserService;
-
+use App\Service\HelpService;
 class BidService
 {
 
@@ -27,13 +27,13 @@ class BidService
     public static function Create($id_post, $days)
     {
         if ($days > 3 || $days < 1) {
-            return 'Error - Неверно указали колличество дней';
+            return response()->json('Error - Неверно указали колличество дней',405) ;
         }
         if (auth('api')->user()->id == PostModel::find($id_post)->id_user) {
-            return 'Error - Нельзя забронировать своё объявление';
+            return response()->json( 'Error - Нельзя забронировать своё объявление',405);
         }
         if (BidModel::where('id_post', $id_post)->where('id_user', auth('api')->user()->id)->first()) {
-            return 'Error - Бронь уже существует';
+            return response()->json( 'Error - Бронь уже существует',405);
         }
         $props['id_post'] = $id_post;
         $props['id_user'] = auth('api')->user()->id;
@@ -59,12 +59,12 @@ class BidService
     {
         $data = [];
         $i = 0;
-        foreach ($bids as $bid) {
+        foreach ($bids->paginate($postOnPage)->items() as $bid) {
             $data[$i]['id'] = $bid->id;
             $data[$i]['post'] = PostService::getPostResponse($bid->id_post)['post'];
             $data[$i]['user'] = UserService::getShortUserModel($bid->id_user);
             $data[$i]['days'] = $bid->days;
-            $data[$i]['created_at'] = $bid->created_at;
+            $data[$i]['created_at'] = HelpService::formatDate($bid->created_at);
             $i++;
         }
 

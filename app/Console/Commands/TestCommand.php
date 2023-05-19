@@ -19,6 +19,8 @@ use App\Models\User;
 use Laravel\Passport\Passport;
 use App\Http\Controllers\userController;
 
+use Illuminate\Support\Facades\Http;
+
 class TestCommand extends Command
 {
   /**
@@ -48,26 +50,56 @@ class TestCommand extends Command
   {
 
 
-    $loyality = new LoyalitySystem(User::find(16));
-    
-    $loyality->addGoals(3);
+    $input = 'carrrot';
 
-    return ;
-    $result = ReservationService::changeStatus(8,'completed');
-    echo($result);
-    return;
-    // Пример использования функции
-    $arr = array(5, 2, 9, 1, 5, 6);
-    echo "Исходный массив: ";
-    print_r($arr);
-    echo "Отсортированный массив: ";
-    print_r($this->shellSort($arr));
-    return;
+    // массив сверяемых слов
+    $words  = array(
+      'apple', 'pineapple', 'banana', 'orange',
+      'radish', 'carrot', 'pea', 'bean', 'potato'
+    );
 
-    if (savedContacts::isContactsSaved(16, 256)) {
-      printf('Yes');
+
+
+
+    //$res = PostService::sortTitlesByLevenshtein($input,$words);
+
+    print_r($res);
+    die();
+    // кратчайшее расстояние пока ещё не найдено
+    $shortest = -1;
+
+    // проходим по словам для нахождения самого близкого варианта
+    foreach ($words as $word) {
+
+      // вычисляем расстояние между входным словом и текущим
+      $lev = levenshtein($input, $word);
+
+      echo($lev."\n");
+      // проверяем полное совпадение
+      if ($lev == 0) {
+
+        // это ближайшее слово (точное совпадение)
+        $closest = $word;
+        $shortest = 0;
+
+        // выходим из цикла - мы нашли точное совпадение
+        break;
+      }
+
+      // если это расстояние меньше следующего наименьшего расстояния
+      // ИЛИ если следующее самое короткое слово ещё не было найдено
+      if ($lev <= $shortest || $shortest < 0) {
+        // устанивливаем ближайшее совпадение и кратчайшее расстояние
+        $closest  = $word;
+        $shortest = $lev;
+      }
+    }
+
+    echo "Вы ввели: $input\n";
+    if ($shortest == 0) {
+      echo "Найдено точное совпадение: $closest\n";
     } else {
-      printf('Error');
+      echo "Вы не имели в виду: $closest?\n";
     }
   }
 

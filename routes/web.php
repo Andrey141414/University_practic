@@ -15,9 +15,9 @@ use Mockery\VerificationDirector;
 | contains the "web" middleware group. Now create something great!
 |
 */
-header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,boundary,Content-Length');
-//header('Access-Control-Allow-Origin: *');
+//header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+//header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,boundary,Content-Length');
+//header('Access-Control-Allow-Origin', '*');
 
 
 Route::get('/', function () {
@@ -30,7 +30,7 @@ Route::get('/test', function () {
 });
 
 Route::get('/blog', function () {
-    return view('Mail/reservationCompleted',['name'=>'123']);
+    return view('Bithday');
 });
 
 

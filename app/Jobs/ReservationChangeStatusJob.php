@@ -10,11 +10,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\reservation;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\reservationCompletedMail;
-use App\Models\postModel;
+use App\Mail\reservationChangeStatusMail;
 use App\Models\User;
 
-class ReservationCompletedJob implements ShouldQueue
+class ReservationChangeStatusJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -40,7 +39,8 @@ class ReservationCompletedJob implements ShouldQueue
     public function handle()
     {
         //
-        Mail::to($this->user)->send(new reservationCompletedMail($this->reservation));
+        
+        Mail::to($this->user)->send(new reservationChangeStatusMail($this->reservation));
         
     }
 }

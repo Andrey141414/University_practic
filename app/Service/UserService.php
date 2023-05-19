@@ -16,7 +16,7 @@ use App\Models\CityModel;
 use App\Models\favoritePost;
 use App\Models\postStatus;
 use App\Models\reviewModel;
-
+use App\Service\HelpService;
 class UserService
 {
     public static function getAllUserPosts($id_user)
@@ -51,7 +51,7 @@ class UserService
         return [
             'id' =>$id_user,
             'name' => $user->name,
-            'created_at' => date('d-m-Y', strtotime($user->created_at)),
+            'created_at' => HelpService::formatDate($user->created_at),
             'rating' => self::calculateRating($id_user),
         ];
     }
@@ -83,23 +83,19 @@ class UserService
 
     public function userInfo($user)
     {
-        // $user = User::find($id_user);
-        // if(!$user)
-        // {
-        //     return null;
-        // }
+        
         $reviews = reviewModel::where('id_user_owner', $user->id)->get();
         return [
             'id' => $user->id,
             'email' => $user->email,
             'name' => $user->name,
-            'email_verified_at' => isset($user->email_verified_at) ? date('d-m-Y', strtotime($user->email_verified_at)) : null,
+            'email_verified_at' => isset($user->email_verified_at) ? HelpService::formatDate($user->email_verified_at) : null,
             'phone_number' => $user->phone_number,
             'blocked_admin' => $user->blocked_admin,
             'num_login_attempts' => $user->num_login_attempts,
             'city' => CityModel::getCityModel($user->id_city),
             'addresses' => (AddressModel::where('id_user', $user->id))->get(),
-            'created_at' => date('d-m-Y', strtotime($user->created_at)),
+            'created_at' => HelpService::formatDate($user->created_at),
             'rating' => UserService::calculateRating($user->id),
             'reviews' => count($reviews),
             'balance' => $user->loyalty_balanse,

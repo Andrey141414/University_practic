@@ -1,9 +1,20 @@
+
+
+#<FilesMatch "\.(ttf|otf|eot|woff)$">
+    # <IfModule mod_headers.c>
+    # Header set Access-Control-Allow-Origin "*"
+    # </IfModule>
+#</FilesMatch>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
+    
+
+    
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -19,3 +30,4 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+

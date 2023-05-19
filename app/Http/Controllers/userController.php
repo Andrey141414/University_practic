@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\CityModel;
 use Illuminate\Support\Facades\Storage;
 use App\Models\AddressModel;
+use App\Models\postModel;
 use App\Models\reviewModel;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Env;
@@ -18,10 +19,50 @@ use App\Models\postStatus;
 use App\Service\PostService;
 use App\Service\RolePolicyService;
 use Intervention\Image\Facades\Image;
+use App\Service\HelpService;
 class userController extends Controller
 {
 
+/** 
+     * @OA\Get(
+     *     path="/api/get_short_user_info",
+     *     security={
+     *           {"passport": {}},
+     *      },
+     *     summary="Получить краткую информацию о пользователе",     
+     *     tags={"User"},
+     *     @OA\Parameter(
+     *       name="id_user",
+     *       in="query",
+     *       required=true,
+     *       example = 8,
+     *       ), 
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Schema(
+     *             type="string",         
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *     ),
+     * ),
+*/
+    public function getShortUserInfo(Request $request)
+    {
+        $this->validator->set($request->all(), [
+            'id_user' => 'required|integer|exists:users,id',
+        ]);
+        if (!$this->validator->validate()) {
+            return response()->json($this->validator->errors, 400);
+        }
 
+        $id_user = $request->get('id_user');
+
+        return response()->json(UserService::getShortUserModel($id_user),200);
+    }
 
     /**
      * @OA\Patch(
@@ -88,13 +129,13 @@ class userController extends Controller
             'id' => $user->id,
             'email' => $user->email,
             'name' => $user->name,
-            'email_verified_at' => isset($user->email_verified_at) ? date('d-m-Y', strtotime($user->email_verified_at)) : null,
+            'email_verified_at' => isset($user->email_verified_at) ? HelpService::formatDate($user->email_verified_at) : null,
             'phone_number' => $user->phone_number,
             'blocked_admin' => $user->blocked_admin,
             'num_login_attempts' => $user->num_login_attempts,
             'city' => CityModel::getCityModel($user->id_city),
             'addresses' => (AddressModel::where('id_user', $user->id))->get(),
-            'created_at' => date('d-m-Y', strtotime($user->created_at)),
+            'created_at' => HelpService::formatDate($user->created_at),
             'rating' => UserService::calculateRating($user->id),
             'reviews' => count($reviews),
             'balance' => $user->loyalty_balanse,
@@ -121,21 +162,15 @@ class userController extends Controller
 
 
 
-    public function test()
+    public function generatePosts()
     {
-        //application/vendor/intervention/image/src/Intervention/Image/Facades
 
 
-        //$image = new Image();
-        $img = Image::make('/home/in-good-hands/web/in-good-hands.dev.mind4.me/application/public/logo.jpg')
-        ->resize(500, 500)
-        ->save('/home/in-good-hands/web/in-good-hands.dev.mind4.me/application/public/log1.jpg');
-        return $img->response('jpg');
+        $category = rand(1,3);
         
-        return;
         $props = [
-            'title' => 'Empty',
-            'description' => 'Empty',
+            'title' => 'Леха в горном',
+            'description' => 'Это Леха в горном',
             'id_category' => 1,
             'image_set' => [
                 config('photo.generatePhoto'),
@@ -156,10 +191,58 @@ class userController extends Controller
         $props['status'] = ('active');
         $props['address'] = json_encode($props['address']);
 
-        for ($i = 0; $i < 1; $i++) {
+        for ($i = 0; $i < 10; $i++) {
+            $category = rand(1,3);
+            $props['id_category'] = $category;
             PostService::newPost($props);
         }
 
         return;
+    }
+
+
+    public function deleteDirsWithoutFiles()
+    {
+        $folders = Storage::disk("local")->allDirectories('PHOTOS');
+
+        // print_r($folders);
+        // return;
+        foreach ($folders as $folder) {
+            
+            //$folder = $folders[6];
+            
+            $dir = explode('/',$folder);
+            if(isset($dir[2]))
+            {
+                if(!postModel::find($dir[2]) || count(Storage::disk("local")->allFiles($folder)) == 0)
+                {
+                    Storage::disk("local")->deleteDirectory($folder);
+                }
+
+                
+            }
+            else{
+                if(!User::find($dir[1]))
+                {
+                    Storage::disk("local")->deleteDirectory($folder);
+                } 
+            }
+        }
+    }
+
+    public function deletePostsWithoutFiles()
+    {
+        $posts = postModel::select('id', 'id_user')->get();
+
+        foreach ($posts as $post) {
+            $id = $post->id;
+            $id_user = $post->id_user;
+            
+            
+            $files = Storage::disk("local")->allFiles("PHOTOS/$id/$id_user");
+            if (count($files) == 0) {
+                $post->delete();
+            }
+        }
     }
 }

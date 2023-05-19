@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BithdayMail;
+use App\Models\User;
 
 class HappyBithday extends Command
 {
@@ -29,7 +32,12 @@ class HappyBithday extends Command
     public function handle()
     {
 
-        Log::debug('sheduler');
+        die();
+        $users = User::all();
+        foreach($users as $user)
+        {
+            Mail::to($user)->send(new BithdayMail());
+        }
         return Command::SUCCESS;
     }
 }

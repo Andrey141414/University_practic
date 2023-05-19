@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,boundary,Content-Length');
-header("Set-Cookie: cross-site-cookie=whatever; SameSite=None; Secure");
+// header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+// header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,boundary,Content-Length');
+// header("Set-Cookie: cross-site-cookie=whatever; SameSite=None; Secure");
+
+
+// header('Access-Control-Allow-Origin', '*');
+// header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+// header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
 
 //Роуты авторизации
 Route::controller(App\Http\Controllers\Auth\LoginController::class)->group(function () {
@@ -59,7 +65,9 @@ Route::controller(App\Http\Controllers\postController::class)->group(function ()
     Route::get('get_phone_number', 'getPhoneNumber')->middleware('onlyAuthorized');
     Route::get('get_contact', 'getContact')->middleware('onlyAuthorized');
 
-    Route::patch('change_post_active', 'changePostActive')->middleware('onlyAuthorized');
+
+    Route::get('get_post_photos', 'getPostPhotos')->middleware('onlyAuthorized');
+    //Route::patch('change_post_active', 'changePostActive')->middleware('onlyAuthorized');
 
 });
 
@@ -90,12 +98,19 @@ Route::controller(App\Http\Controllers\userController::class)->group(function ()
     // Route::delete('/delete_address', 'deleteAddress')->middleware('onlyAuthorized');
     Route::patch('/change_user_info', 'changeUserInfo')->middleware('onlyAuthorized');
     //Route::get('/is_posts_for_address', 'isPostsForAddress')->middleware('onlyAuthorized');
+    Route::get('/get_short_user_info','getShortUserInfo')->middleware('onlyAuthorized');;
 });
 
 
 
 
 Route::post('/ping', [App\Http\Controllers\userController::class, 'test'])->name('ping');
+Route::delete('/delete_dirs_without_files', [App\Http\Controllers\userController::class, 'deleteDirsWithoutFiles']);
+Route::delete('/delete_posts_without_files', [App\Http\Controllers\userController::class, 'deletePostsWithoutFiles']);
+
+Route::post('/generate_posts', [App\Http\Controllers\userController::class, 'generatePosts']);
+
+
 Route::delete('/delete_account', [App\Http\Controllers\userController::class, 'deleteAccount'])->middleware('onlyAuthorized');
 
 Route::controller(App\Http\Controllers\passwordController::class)->group(function () {
@@ -159,6 +174,18 @@ Route::controller(App\Http\Controllers\AdminPanel\AdminController::class)->group
     
 
     // Route::get('/get_my_reviews', 'getMyReviews');
+});
+
+Route::controller(App\Http\Controllers\AdminPanel\ModeratorController::class)->group(function () {
+    Route::get('admin/get_pending_posts', 'getPendingPosts');
+    Route::get('admin/get_review_posts', 'getReviewPosts');
+    Route::patch('admin/publish_post', 'publishPost');
+    Route::patch('admin/reject_post', 'rejectPost');
+    Route::post('admin/start_checking', 'startChecking');
+    
+    Route::patch('/admin/cancel_review', 'cancelReview');
+    
+    Route::patch('admin/end_checking', 'endChecking');
 });
 
 

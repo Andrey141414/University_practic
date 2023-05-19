@@ -15,7 +15,7 @@ use App\Service\PostService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
-
+use App\Jobs\ReservationChangeStatusJob;
 class bidController extends Controller
 {
     //
@@ -60,6 +60,7 @@ class bidController extends Controller
         if (!$this->validator->validate()) {
             return response()->json($this->validator->errors, 400);
         }
+
         $post = postModel::find($request->input('id_post'));
         if ($post && $post->status == 'active') {
                $bid = BidService::Create(
@@ -131,8 +132,6 @@ class bidController extends Controller
         if ($request->get('limit')) {
             $postOnPage = $request->get('limit');
         }
-
-        //$bids->orderBy('created_at','desc');
         return BidService::getBidsWithPagination($bids, $postOnPage);
     }
 
@@ -175,6 +174,17 @@ class bidController extends Controller
             return response()->json($this->validator->errors, 400);
         }
         $res = BidService::confirmBid($request->input('id_bid'));
+
+        $post = postModel::find($res->id_post);
+        dispatch(new ReservationChangeStatusJob(
+            User::find($post->id_user),
+            $res,
+        ));
+        //Отправляем сообщение на почту
+        dispatch(new ReservationChangeStatusJob(
+            User::find($res->id_user),
+            $res,
+        ));
         return json_encode($res);
     }
 

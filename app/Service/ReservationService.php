@@ -21,8 +21,8 @@ use App\Models\reservationStatus;
 use App\Models\reviewModel;
 use App\Service\UserService;
 use App\Service\LoyalitySystem;
-use App\Jobs\ReservationCompletedJob;
-
+use App\Jobs\ReservationChangeStatusJob;
+use App\Service\HelpService;
 class ReservationService
 {
 
@@ -37,8 +37,8 @@ class ReservationService
             'id' => $res->id,
             'user' => UserService::getShortUserModel($res->id_user),
             'status' => $res->status,
-            'expired_at' => date('d-m-Y', strtotime($res->expired_at)),
-        ];
+            'expired_at' => HelpService::formatDate($res->expired_at),
+     ];
     }
     public static function Create($bid)
     {
@@ -131,9 +131,8 @@ class ReservationService
             $data[$i]['user'] = UserService::getShortUserModel($res->id_user);
             $data[$i]['days'] = $res->days;
             $data[$i]['status'] = $res->status;
-            $expired_at = ($type == 'OUTPUT') ? Carbon::parse($res->created_at)->addDays($res->days)->format('d-m-Y') : null;
-            $data[$i]['expired_at'] = $expired_at;
-            $data[$i]['created_at'] = $res->created_at;
+            $data[$i]['expired_at'] = HelpService::formatDate($res->expired_at);
+            $data[$i]['created_at'] = HelpService::formatDate($res->created_at);
             $i++;
         }
 
@@ -154,12 +153,12 @@ class ReservationService
     public static function changeStatus($id_res, $status)
     {
         if ($res = (new reservationStatus)->checkStatusMove($id_res, $status)) {
-
+            $post = postModel::find($res->id_post);
+                
             $updateProps = [
                 'status' => $status,
             ];
             if ($status == 'completed') {
-                $post = postModel::find($res->id_post);
                 $post->Update([
                     'status' => 'closed',
                 ]);
@@ -171,16 +170,6 @@ class ReservationService
                 foreach ($bids as $bid) {
                     $bid->delete();
                 }
-                //Отправляем сообщение на почту
-                dispatch(new ReservationCompletedJob(
-                    User::find($post->id_user),
-                    $res,
-                ));
-                //Отправляем сообщение на почту
-                dispatch(new ReservationCompletedJob(
-                    User::find($res->id_user),
-                    $res,
-                ));
             }
 
             if ($status == 'cancel') {
@@ -191,6 +180,21 @@ class ReservationService
             }
 
             $res->Update($updateProps);
+
+
+
+            //Отправляем сообщение на почту
+            dispatch(new ReservationChangeStatusJob(
+                User::find($post->id_user),
+                $res,
+            ));
+            //Отправляем сообщение на почту
+            dispatch(new ReservationChangeStatusJob(
+                User::find($res->id_user),
+                $res,
+            ));
+
+
             return $res;
         }
         return response()->json('У текущей брони невозможно поставить такой статус', 415);
@@ -201,7 +205,7 @@ class ReservationService
         $review = reviewModel::where('id_reservation', $id_res)->first();
         if ($review) {
             $review = json_decode($review, true);
-            $review['created_at'] = date('d-m-Y', strtotime($review['created_at']));
+            $review['created_at'] = HelpService::formatDate($review['created_at']);
             $review['user_writer'] = UserService::getShortUserModel($review['id_user_writer']);
             unset($review['id_user_writer']);
         }
